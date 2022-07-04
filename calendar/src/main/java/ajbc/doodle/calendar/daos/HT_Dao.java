@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.stereotype.Repository;
 
+//TODO update to current project
 //@SuppressWarnings("unchecked")
 //@Repository("ht_Dao")
 //public class HT_Dao implements _Dao {
