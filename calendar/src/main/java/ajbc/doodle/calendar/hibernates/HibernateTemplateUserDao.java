@@ -13,7 +13,7 @@ import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.User;
 
-@Component(value = "HT_user")
+@Component(value = "HNT_user")
 @SuppressWarnings("unchecked")
 public class HibernateTemplateUserDao implements UserDao {
 
@@ -53,21 +53,9 @@ public class HibernateTemplateUserDao implements UserDao {
 		Criterion criterion = Restrictions.eq("email", email);
 		criteria.add(criterion);
 		List<User> users = (List<User>)template.findByCriteria(criteria);
-		if(users == null || users.size() == 0)
+		if(users.size() == 0 || users == null)
 			throw new DaoException("There is no such user in 'users' DB with email: "+email);
 		return users.get(0);
-	}
-
-	@Override
-	public void hardDeleteUser(User user) throws DaoException {
-		// TODO 
-		template.delete(user);
-	}
-
-	@Override
-	public void softDeleteUser(User user) throws DaoException {
-		user.setInActive(1);
-		updateUser(user);	
 	}
 
 }

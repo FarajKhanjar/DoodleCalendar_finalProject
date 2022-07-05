@@ -29,12 +29,8 @@ public interface UserDao {
 		throw new DaoException("Method not implemented");
 	}
 
-	public User getUserByEmail(String email) throws DaoException;
-
-	@Transactional(readOnly = false)
-	public void hardDeleteUser(User user) throws DaoException;
-
-	@Transactional(readOnly = false)
-	public void softDeleteUser(User user) throws DaoException;
+	public default User getUserByEmail(String email) throws DaoException {
+		throw new DaoException("Method not implemented");
+	}
 
 }

@@ -33,7 +33,7 @@ public class SeedDB {
 	{
 		List<User> users = userDao.getAllUsers();
 		
-		if (users == null || users.size() == 0) {
+		if (users.size() == 0 || users == null) {
 			User user1 = new User("Faraj", "Khanjar", "farajkhanjar@gmail.com", 
 					LocalDate.of(1993, 6, 28), LocalDate.now());
 			
@@ -70,13 +70,11 @@ public class SeedDB {
 
 	}
 	
-	private void seedEvents()
-	{
+	private void seedEvents() {
 		
 	}
 	
-	private void seedNotifications()
-	{
+	private void seedNotifications() {
 		
 	}
 

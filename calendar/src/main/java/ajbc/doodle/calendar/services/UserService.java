@@ -36,13 +36,5 @@ public class UserService {
 	public User getUserByEmail(String email) throws DaoException {
 		return userDao.getUserByEmail(email);
 	}
-
-	public void hardDeleteUser(User user) throws DaoException {
-		userDao.hardDeleteUser(user);	
-	}
-
-	public void softDeleteUser(User user) throws DaoException {
-		userDao.softDeleteUser(user);	
-	}
 	
 }

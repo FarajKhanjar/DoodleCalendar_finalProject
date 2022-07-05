@@ -30,22 +30,23 @@ public class UserController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<User>> getAllUsers() throws DaoException {
-		List<User> allusers = userService.getAllUsers();
-		if (allusers == null)
+		List<User> allUsers = userService.getAllUsers();
+		if (allUsers == null)
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		return ResponseEntity.ok(allusers);
+		return ResponseEntity.ok(allUsers);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<?> createUser(@RequestBody User user) {
+	public ResponseEntity<?> AddUser(@RequestBody User user) {
 		try {
 			userService.addUser(user);
 			user = userService.getUserById(user.getUserId());
 			return ResponseEntity.status(HttpStatus.CREATED).body(user);
+			
 		} catch (DaoException e) {
 			ErrorMessage errorMsg = new ErrorMessage();
 			errorMsg.setData(e.getMessage());
-			errorMsg.setMessage(e.getMessage());
+			errorMsg.setMessage("Failed to add user to DB");
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
 		}
 	}
@@ -57,10 +58,11 @@ public class UserController {
 			userService.updateUser(user);
 			user = userService.getUserById(id);
 			return ResponseEntity.status(HttpStatus.OK).body(user);
+			
 		} catch (DaoException e) {
 			ErrorMessage errorMsg = new ErrorMessage();
 			errorMsg.setData(e.getMessage());
-			errorMsg.setMessage(e.getMessage());
+			errorMsg.setMessage("Failed to update this user");
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
 		}
 	}
@@ -70,10 +72,11 @@ public class UserController {
 		try {
 			User user = userService.getUserById(id);
 			return ResponseEntity.ok(user);
+			
 		} catch (DaoException e) {
 			ErrorMessage errorMsg = new ErrorMessage();
 			errorMsg.setData(e.getMessage());
-			errorMsg.setMessage(e.getMessage());
+			errorMsg.setMessage("Failed to get user By this Id");
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMsg);
 		}
 
@@ -84,24 +87,13 @@ public class UserController {
 		try {
 			User user = userService.getUserByEmail(email);
 			return ResponseEntity.ok(user);
+			
 		} catch (DaoException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+			ErrorMessage errorMsg = new ErrorMessage();
+			errorMsg.setData(e.getMessage());
+			errorMsg.setMessage("Failed to get user By this email");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMsg);
 		}
 	}
 	
-	@RequestMapping(method = RequestMethod.DELETE,path = "/byId/{id}")
-	public ResponseEntity<?> deleteUser(@PathVariable Integer id, @RequestParam String deleteType) throws DaoException {
-		try {
-			User user = userService.getUserById(id);
-			if(deleteType.toUpperCase() == "HARD")
-				userService.hardDeleteUser(user);
-			else
-				userService.softDeleteUser(user);
-			System.out.println(deleteType);
-			return ResponseEntity.ok(user);
-		} catch (DaoException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-		}
-	}
-
 }
