@@ -6,6 +6,7 @@ public enum Category {
 	WEDDING,
 	VACATION,
 	BIRTHDAY,
-	VOLUNTEERING;
+	VOLUNTEERING,
+	GENERAL;
 	
 }

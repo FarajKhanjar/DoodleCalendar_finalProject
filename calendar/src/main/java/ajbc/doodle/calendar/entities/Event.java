@@ -1,6 +1,7 @@
 package ajbc.doodle.calendar.entities;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -31,25 +33,25 @@ public class Event {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer eventId;
-	private String title;
-	private Category category;
-	private Address address;
-	private boolean isAllDay;
-	
-	private LocalDate startDate;
-	private LocalDate endDate;
-	private LocalTime startTime;
-	private LocalTime endTime;
-	
-	private String description;
-	private List<Integer> guests;
-	private List<Integer> notifications;
-	private RepeatingType repeatingType;
-	
 	@ManyToOne(cascade = {CascadeType.MERGE})
 	@JoinColumn(name="userId")
 	private User owner;
 	
-	private Integer inActive; // inActive=1, active=0
+	private String title;
+	private Category category;
+	private Address address;
+	private Integer isAllDay; // isAllDay=1, not=0(DEFAULT)
+	
+	private LocalDateTime startDateTime;
+	private LocalDateTime endDateTime;
+	
+	private String description;
+	private RepeatingType repeatingType;
+	private Integer inActive; // inActive=1, active=0(DEFAULT)
+	
+	@ManyToMany(mappedBy = "usersEvents")
+	private List<User> guestsList;
+	
+
 
 }
