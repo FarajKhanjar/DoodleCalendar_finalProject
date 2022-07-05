@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,9 +40,20 @@ public class User {
 	private LocalDate joinDate;
 	private Integer inActive; // inActive=1, active=0(DEFAULT)
 	
-	@ManyToMany
-	@JoinTable(name = "usersEvents", joinColumns = @JoinColumn(name = "userId"), 
-			   inverseJoinColumns = @JoinColumn(name = "eventId"))
-	private List<Event> eventsList;
+//	@JsonIgnore
+//	@ManyToMany
+//	@JoinTable(name = "usersEvents", joinColumns = @JoinColumn(name = "userId"), 
+//			   inverseJoinColumns = @JoinColumn(name = "eventId"))
+//	private List<Event> eventsList;
+	
+	public User(String firstName, String lastName, String email, LocalDate birthDate, LocalDate joinDate) {
+		
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.birthDate = birthDate;
+		this.joinDate = joinDate;
+		this.inActive = 0;
+	}
 
 }

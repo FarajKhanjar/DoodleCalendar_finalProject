@@ -1,6 +1,7 @@
 package ajbc.doodle.calendar.entities;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -37,10 +38,14 @@ public class Notification {
 	@ManyToOne(cascade = {CascadeType.MERGE})
 	@JoinColumn(name="userId")
 	private User user;
+	@Column(insertable = false, updatable = false)
+	private Integer userId;
 	
 	@ManyToOne(cascade = {CascadeType.MERGE})
 	@JoinColumn(name="eventId")
 	private Event event;
+	@Column(insertable = false, updatable = false)
+	private Integer eventId;
 	
 
 }

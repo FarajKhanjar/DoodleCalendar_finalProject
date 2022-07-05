@@ -15,6 +15,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ajbc.doodle.calendar.enums.Category;
 import ajbc.doodle.calendar.enums.RepeatingType;
 import lombok.Getter;
@@ -49,8 +51,9 @@ public class Event {
 	private RepeatingType repeatingType;
 	private Integer inActive; // inActive=1, active=0(DEFAULT)
 	
-	@ManyToMany(mappedBy = "usersEvents")
-	private List<User> guestsList;
+//	@JsonIgnore
+//	@ManyToMany(mappedBy = "usersEvents")
+//	private List<User> guestsList;
 	
 
 
