@@ -26,46 +26,82 @@ import ajbc.doodle.calendar.services.UserService;
 public class UserController {
 
 	@Autowired
-	UserService service;
-	
-	@RequestMapping(method = RequestMethod.GET, path="/{userId}")
-	public ResponseEntity<?> getUserById(@PathVariable Integer userId) {
-		
-		User user;
-		try {
-			user = service.getUser(userId);
-			return ResponseEntity.ok(user);
-			
-		} catch (DaoException e) {
-			ErrorMessage errorMessage = new ErrorMessage();
-			errorMessage.setData(e.getMessage());
-			errorMessage.setMessage("Failed to get user with id: "+userId);
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
-		}
+	private UserService userService;
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<List<User>> getAllUsers() throws DaoException {
+		List<User> allusers = userService.getAllUsers();
+		if (allusers == null)
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		return ResponseEntity.ok(allusers);
 	}
-	
-	
+
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<?> addUser(@RequestBody User user) {
-		
+	public ResponseEntity<?> createUser(@RequestBody User user) {
 		try {
-			service.addUser(user);
-			user = service.getUser(user.getUserId());
+			userService.addUser(user);
+			user = userService.getUserById(user.getUserId());
 			return ResponseEntity.status(HttpStatus.CREATED).body(user);
 		} catch (DaoException e) {
-			ErrorMessage errorMessage = new ErrorMessage();
-			errorMessage.setData(e.getMessage());
-			errorMessage.setMessage("Failed to add user to 'users' DB table.");
-			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+			ErrorMessage errorMsg = new ErrorMessage();
+			errorMsg.setData(e.getMessage());
+			errorMsg.setMessage(e.getMessage());
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
+		}
+	}
+
+	@RequestMapping(method = RequestMethod.PUT, path = "/byId/{id}")
+	public ResponseEntity<?> updateUser(@RequestBody User user, @PathVariable Integer id) {
+		try {
+			user.setUserId(id);
+			userService.updateUser(user);
+			user = userService.getUserById(id);
+			return ResponseEntity.status(HttpStatus.OK).body(user);
+		} catch (DaoException e) {
+			ErrorMessage errorMsg = new ErrorMessage();
+			errorMsg.setData(e.getMessage());
+			errorMsg.setMessage(e.getMessage());
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
+		}
+	}
+
+	@RequestMapping(method = RequestMethod.GET, path = "/byId/{id}")
+	public ResponseEntity<?> getUserById(@PathVariable Integer id) throws DaoException {
+		try {
+			User user = userService.getUserById(id);
+			return ResponseEntity.ok(user);
+		} catch (DaoException e) {
+			ErrorMessage errorMsg = new ErrorMessage();
+			errorMsg.setData(e.getMessage());
+			errorMsg.setMessage(e.getMessage());
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMsg);
+		}
+
+	}
+
+	@RequestMapping(method = RequestMethod.GET, path = "/byEmail/{email}")
+	public ResponseEntity<?> getUserByEmail(@PathVariable String email) throws DaoException {
+		try {
+			User user = userService.getUserByEmail(email);
+			return ResponseEntity.ok(user);
+		} catch (DaoException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<List<User>> getAllUsers() throws DaoException{
-		List<User> list = service.getAllUsers();
-		if(list==null)
-			return ResponseEntity.notFound().build();
-		return ResponseEntity.ok(list);
+	@RequestMapping(method = RequestMethod.DELETE,path = "/byId/{id}")
+	public ResponseEntity<?> deleteUser(@PathVariable Integer id, @RequestParam String deleteType) throws DaoException {
+		try {
+			User user = userService.getUserById(id);
+			if(deleteType.toUpperCase() == "HARD")
+				userService.hardDeleteUser(user);
+			else
+				userService.softDeleteUser(user);
+			System.out.println(deleteType);
+			return ResponseEntity.ok(user);
+		} catch (DaoException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		}
 	}
-	
+
 }

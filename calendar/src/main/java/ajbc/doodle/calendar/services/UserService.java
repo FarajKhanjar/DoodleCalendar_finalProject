@@ -13,24 +13,36 @@ import ajbc.doodle.calendar.entities.User;
 public class UserService {
 	
 	@Autowired
-	UserDao dao;
-	
-	public User getUser(Integer userId) throws DaoException {
-		return dao.getUser(userId);
+	private UserDao userDao;
+
+	// CRUD
+	public List<User> getAllUsers() throws DaoException {
+		return userDao.getAllUsers();
 	}
 	
 	public void addUser(User user) throws DaoException {
-		dao.addUser(user);
+		userDao.addUser(user);
+	}
+	
+	public void updateUser(User user) throws DaoException {
+		userDao.updateUser(user);
 	}
 
-	
-	public List<User> getAllUsers() throws DaoException {
-		return dao.getAllUsers();
+	// Queries
+	public User getUserById(Integer userId) throws DaoException {
+		return userDao.getUserById(userId);
 	}
-	
-	public void deleteAllUsers() throws DaoException {
-		dao.deleteAllUsers();
+
+	public User getUserByEmail(String email) throws DaoException {
+		return userDao.getUserByEmail(email);
 	}
-	
+
+	public void hardDeleteUser(User user) throws DaoException {
+		userDao.hardDeleteUser(user);	
+	}
+
+	public void softDeleteUser(User user) throws DaoException {
+		userDao.softDeleteUser(user);	
+	}
 	
 }

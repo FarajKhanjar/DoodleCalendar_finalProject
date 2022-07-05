@@ -3,8 +3,10 @@ package ajbc.doodle.calendar.entities;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -40,8 +42,7 @@ public class User {
 	private LocalDate joinDate;
 	private Integer inActive; // inActive=1, active=0(DEFAULT)
 	
-//	@JsonIgnore
-//	@ManyToMany
+//	@ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
 //	@JoinTable(name = "usersEvents", joinColumns = @JoinColumn(name = "userId"), 
 //			   inverseJoinColumns = @JoinColumn(name = "eventId"))
 //	private List<Event> eventsList;
