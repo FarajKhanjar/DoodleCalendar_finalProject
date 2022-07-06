@@ -48,11 +48,12 @@ public class Event {
 	@Enumerated(EnumType.STRING)
 	private Category category;
 	
-	@Column(updatable = false)
+	@JsonIgnore
+	@Column(insertable = false, updatable = false)
 	private Integer addressId;
-//	@ManyToOne(cascade = {CascadeType.MERGE})
-//	@JoinColumn(name="addressId")
-//	private Address address;
+	@ManyToOne(cascade = {CascadeType.MERGE})
+	@JoinColumn(name="addressId")
+	private Address address;
 	
 	private Integer isAllDay; // isAllDay=1, not=0(DEFAULT)
 	private LocalDateTime startDateTime;
