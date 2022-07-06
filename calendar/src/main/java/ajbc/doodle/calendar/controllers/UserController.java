@@ -37,7 +37,7 @@ public class UserController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<?> AddUser(@RequestBody User user) {
+	public ResponseEntity<?> addUser(@RequestBody User user) {
 		try {
 			userService.addUser(user);
 			user = userService.getUserById(user.getUserId());
@@ -94,6 +94,41 @@ public class UserController {
 			errorMsg.setMessage("Failed to get user By this email");
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMsg);
 		}
+	}
+	
+	@RequestMapping(method = RequestMethod.DELETE,path = "/softly/{id}")
+	public ResponseEntity<?> deleteUserSoftly(@PathVariable Integer id) throws DaoException {
+		try {
+			User user = userService.getUserById(id);
+			userService.deleteUserSoftly(user);
+			user = userService.getUserById(id);
+			return ResponseEntity.status(HttpStatus.OK).body(user);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMsg = new ErrorMessage();
+			errorMsg.setData(e.getMessage());
+			errorMsg.setMessage("Failed to delete this user softly");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
+		}
+		
+	}
+	
+	@RequestMapping(method = RequestMethod.DELETE,path = "/hardly/{id}")
+	public ResponseEntity<?> deleteUserHardly(@PathVariable Integer id) throws DaoException {
+		// TODO fix it
+		try {
+			User user = userService.getUserById(id);
+			userService.deleteUserHardly(user);
+			user = userService.getUserById(id);
+			return ResponseEntity.status(HttpStatus.OK).body(user);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMsg = new ErrorMessage();
+			errorMsg.setData(e.getMessage());
+			errorMsg.setMessage("Failed to delete this user hardly");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
+		}
+		
 	}
 	
 }

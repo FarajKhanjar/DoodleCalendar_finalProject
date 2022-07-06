@@ -57,5 +57,16 @@ public class HibernateTemplateUserDao implements UserDao {
 			throw new DaoException("There is no such user in 'users' DB with email: "+email);
 		return users.get(0);
 	}
+	
+	@Override
+	public void deleteUserSoftly(User user) throws DaoException {
+		user.setInActive(1);
+		updateUser(user);	
+	}
+	
+	@Override
+	public void deleteUserHardly(User user) throws DaoException {
+		template.delete(user);
+	}
 
 }

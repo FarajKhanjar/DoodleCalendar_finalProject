@@ -37,4 +37,12 @@ public class UserService {
 		return userDao.getUserByEmail(email);
 	}
 	
+	public void deleteUserSoftly(User user) throws DaoException {
+		userDao.deleteUserSoftly(user);	
+	}
+	
+	public void deleteUserHardly(User user) throws DaoException {
+		userDao.deleteUserHardly(user);	
+	}
+	
 }
