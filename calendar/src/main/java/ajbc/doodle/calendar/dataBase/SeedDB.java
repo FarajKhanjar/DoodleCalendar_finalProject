@@ -1,6 +1,8 @@
 package ajbc.doodle.calendar.dataBase;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,9 +13,13 @@ import org.springframework.stereotype.Component;
 
 import ajbc.doodle.calendar.daos.AddressDao;
 import ajbc.doodle.calendar.daos.DaoException;
+import ajbc.doodle.calendar.daos.EventDao;
 import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.Address;
+import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.User;
+import ajbc.doodle.calendar.enums.Category;
+import ajbc.doodle.calendar.enums.RepeatingType;
 
 @Component
 public class SeedDB {
@@ -23,12 +29,15 @@ public class SeedDB {
 
 	@Autowired
 	private AddressDao addressDao;
+	
+	@Autowired
+	private EventDao eventDao;
 
 	@EventListener
 	public void seed(ContextRefreshedEvent event) throws DaoException {
 		seedUsers();
 		seedAddresses();
-		// seedEvents();
+		seedEvents();
 		// seedNotifications();
 	}
 
@@ -96,7 +105,25 @@ public class SeedDB {
 
 	}
 
-	private void seedEvents() {
+	private void seedEvents() throws DaoException {
+		
+		List<User> guestsList = new ArrayList<User>();
+		guestsList.add(userDao.getUserById(1));
+		guestsList.add(userDao.getUserById(2));
+
+		List<Event> eventsList = eventDao.getAllEvents();
+
+		if (eventsList.size() == 0 || eventsList == null) {
+			eventDao.addEvent(new Event(1, "AJBC final project",Category.TASK,2,0, LocalDateTime.of(2022, 7, 7, 8, 0),
+					LocalDateTime.of(2022, 07, 14, 17, 0), "The topic: Doodle calender API.",
+					RepeatingType.NONE, new ArrayList<User>()));
+			
+			eventDao.addEvent(new Event(2, "Shira & Ran",Category.WEDDING,3,0, LocalDateTime.of(2022, 8, 4, 17, 0),
+					LocalDateTime.of(2022, 8, 5, 20, 0),
+					"The bridal evening begins at the-Lights Hall in Haifa, the singer begins an hour after the gathering.",
+					RepeatingType.NONE, guestsList));
+			
+		}
 
 	}
 

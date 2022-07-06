@@ -42,10 +42,10 @@ public class User {
 	private LocalDate joinDate;
 	private Integer inActive; // inActive=1, active=0(DEFAULT)
 	
-//	@ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-//	@JoinTable(name = "usersEvents", joinColumns = @JoinColumn(name = "userId"), 
-//			   inverseJoinColumns = @JoinColumn(name = "eventId"))
-//	private List<Event> eventsList;
+	@JsonIgnore
+	@ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+	@JoinTable(name = "usersEvents", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "eventId"))
+	private List<Event> eventsList;
 	
 	public User(String firstName, String lastName, String email, LocalDate birthDate, LocalDate joinDate) {
 		

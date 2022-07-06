@@ -39,54 +39,53 @@ public class Event {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer eventId;
+	
 	@Column(updatable = false)
-	@JoinColumn(name="userId")
 	private Integer userId;
 	
 	private String title;
+	
 	@Enumerated(EnumType.STRING)
 	private Category category;
 	
-	@JsonIgnore
+	@Column(updatable = false)
 	private Integer addressId;
-
-	@OneToMany(cascade = {CascadeType.MERGE})
-	@JoinColumn(name="addressId")
-	private Address address;
+//	@ManyToOne(cascade = {CascadeType.MERGE})
+//	@JoinColumn(name="addressId")
+//	private Address address;
 	
-
 	private Integer isAllDay; // isAllDay=1, not=0(DEFAULT)
-	
 	private LocalDateTime startDateTime;
 	private LocalDateTime endDateTime;
-	
 	private String description;
+	
 	@Enumerated(EnumType.STRING)
 	private RepeatingType repeatingType;
+	
 	private Integer inActive; // inActive=1, active=0(DEFAULT)
 	
-//	@ManyToMany(mappedBy="eventsList",cascade = {CascadeType.MERGE})
-//	private List<User> guestsList;
+	@ManyToMany(mappedBy="eventsList", cascade = {CascadeType.MERGE})
+	@JsonIgnore
+	private List<User> guestsList;
 	
-	@OneToMany(cascade = {CascadeType.MERGE})
-	@JoinColumn(name = "notificationId")
-	private List<Notification> notifications;
+//	@OneToMany(cascade = {CascadeType.MERGE})
+//	@JoinColumn(name = "notificationId")
+//	private List<Notification> notificationsList;
 	
-//	public Event(Integer userId, String title, Category category, Integer addressId, Integer isAllDay, LocalDateTime startDateTime,
-//			LocalDateTime endDateTime, String description, RepeatingType repeatingType,
-//			List<User> guestsList) {
-//		this.userId = userId;
-//		this.title = title;
-//		this.category= category;
-//		this.addressId=addressId;
-//		this.isAllDay = isAllDay;
-//		this.startDateTime = startDateTime;
-//		this.endDateTime = endDateTime;
-//		this.description = description;
-//		this.repeatingType = repeatingType;
-//		this.inActive = 0;
-//		this.guestsList = guestsList;
-//	}
+	public Event(Integer userId, String title, Category category, Integer addressId, Integer isAllDay, LocalDateTime startDateTime,
+			LocalDateTime endDateTime, String description, RepeatingType repeatingType, List<User> guestsList) {
+		this.userId = userId;
+		this.title = title;
+		this.category= category;
+		this.addressId=addressId;
+		this.isAllDay = isAllDay;
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
+		this.description = description;
+		this.repeatingType = repeatingType;
+		this.inActive = 0;
+		this.guestsList = guestsList;
+	}
 	
 
 
