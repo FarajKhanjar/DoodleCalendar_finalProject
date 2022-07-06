@@ -14,12 +14,15 @@ import org.springframework.stereotype.Component;
 import ajbc.doodle.calendar.daos.AddressDao;
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.daos.EventDao;
+import ajbc.doodle.calendar.daos.NotificationDao;
 import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.Address;
 import ajbc.doodle.calendar.entities.Event;
+import ajbc.doodle.calendar.entities.Notification;
 import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.enums.Category;
 import ajbc.doodle.calendar.enums.RepeatingType;
+import ajbc.doodle.calendar.enums.Unit;
 
 @Component
 public class SeedDB {
@@ -32,13 +35,16 @@ public class SeedDB {
 	
 	@Autowired
 	private EventDao eventDao;
+	
+	@Autowired
+	private NotificationDao notificationDao;
 
 	@EventListener
 	public void seed(ContextRefreshedEvent event) throws DaoException {
 		seedUsers();
 		seedAddresses();
 		seedEvents();
-		// seedNotifications();
+		seedNotifications();
 	}
 
 	private void seedUsers() throws DaoException {
@@ -127,8 +133,28 @@ public class SeedDB {
 
 	}
 
-	private void seedNotifications() {
+	public void seedNotifications() throws DaoException {
+		
+		List<Notification> notificationsList = notificationDao.getAllNotifications();
+		List<Event> eventsList = eventDao.getAllEvents();
+		
+		if (notificationsList.size() == 0 || notificationsList == null) {
+			
+		notificationDao.addNotification(
+				new Notification("AJBC project", "This is a reminder message for your final programming project.",
+						Unit.MINUTES, 10 ,eventsList.get(0).getEventId()));
 
+		notificationDao.addNotification(
+				new Notification("The wedding is approaching", "This is a reminder message for your friends wedding.",
+						Unit.MINUTES, 10 ,eventsList.get(1).getEventId()));
+		
+		notificationDao.addNotification(
+				new Notification("Wedding gift", "Dont forget to buy a gift for your friends!",
+						Unit.MINUTES, 30 ,eventsList.get(1).getEventId()));
+		
+		notificationDao.addNotification(
+				new Notification("Day-off from work", "Reminder to ask for a day off from your boss because of the wedding.",
+						Unit.HOURS, 60 ,eventsList.get(1).getEventId()));
+		}
 	}
-
 }

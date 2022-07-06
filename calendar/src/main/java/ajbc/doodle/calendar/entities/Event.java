@@ -69,9 +69,10 @@ public class Event {
 	@JsonIgnore
 	private List<User> guestsList;
 	
-//	@OneToMany(cascade = {CascadeType.MERGE})
-//	@JoinColumn(name = "notificationId")
-//	private List<Notification> notificationsList;
+	@JsonIgnore
+	@OneToMany(cascade = {CascadeType.MERGE})
+	@JoinColumn(name = "notificationId")
+	private List<Notification> notificationsList;
 	
 	public Event(Integer userId, String title, Category category, Integer addressId, Integer isAllDay, LocalDateTime startDateTime,
 			LocalDateTime endDateTime, String description, RepeatingType repeatingType, List<User> guestsList) {
