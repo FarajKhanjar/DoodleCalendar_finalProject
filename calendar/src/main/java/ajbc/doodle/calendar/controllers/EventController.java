@@ -27,14 +27,12 @@ public class EventController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<Event>> getAllEvents() throws DaoException {
-		List<Event> allEvents = eventService.getAllEvents();
-		if (allEvents == null)
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		return ResponseEntity.ok(allEvents);
+		List<Event> events = eventService.getAllEvents();
+		return ResponseEntity.ok(events);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<?> AddEvent(@RequestBody Event event, @PathVariable Integer userId) {
+	public ResponseEntity<?> addEvent(@RequestBody Event event, @PathVariable Integer userId) {
 		try {
 			eventService.addEvent(event,userId);
 			event = eventService.getEventById(event.getEventId());
@@ -48,21 +46,17 @@ public class EventController {
 		}
 	}
 
-//	@RequestMapping(method = RequestMethod.PUT, path = "/byId/{id}")
-//	public ResponseEntity<?> updateUser(@RequestBody User user, @PathVariable Integer id) {
-//		try {
-//			user.setUserId(id);
-//			userService.updateUser(user);
-//			user = userService.getUserById(id);
-//			return ResponseEntity.status(HttpStatus.OK).body(user);
-//			
-//		} catch (DaoException e) {
-//			ErrorMessage errorMsg = new ErrorMessage();
-//			errorMsg.setData(e.getMessage());
-//			errorMsg.setMessage("Failed to update this user");
-//			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
-//		}
-//	}
+	@RequestMapping(method = RequestMethod.PUT, path = "/{id}")
+	public ResponseEntity<?> updateUser(@RequestBody Event event, @PathVariable Integer id) {
+		try {
+			event.setEventId(id);
+			eventService.updateEvent(event);
+			event = eventService.getEventById(id);
+			return ResponseEntity.status(HttpStatus.OK).body(event);
+		} catch (DaoException e) {
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(e.getMessage());
+		}
+	}
 
 	@RequestMapping(method = RequestMethod.GET, path = "/byId/{id}")
 	public ResponseEntity<?> getEventById(@PathVariable Integer id) throws DaoException {

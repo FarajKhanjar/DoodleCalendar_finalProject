@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -77,8 +79,6 @@ public class SeedDB {
 
 		}
 
-		// userService.getAllUsers().stream().forEach(System.out::println);
-
 	}
 
 	private void seedAddresses() throws DaoException {
@@ -113,21 +113,30 @@ public class SeedDB {
 
 	private void seedEvents() throws DaoException {
 		
+		List<Event> eventsList = eventDao.getAllEvents();
+		
 		List<User> guestsList = new ArrayList<User>();
 		guestsList.add(userDao.getUserById(1));
 		guestsList.add(userDao.getUserById(2));
 
-		List<Event> eventsList = eventDao.getAllEvents();
+		User eventOwner_1 = userDao.getUserById(1);
+		User eventOwner_2 = userDao.getUserById(2);
+		Set<User> eventGuests_1 = new HashSet<User>();
+		eventGuests_1.add(eventOwner_1);
+		Set<User> eventGuests_2 = new HashSet<User>();
+		eventGuests_2.add(eventOwner_2);
+		eventGuests_2.add(userDao.getUserById(1));
+		eventGuests_2.add(userDao.getUserById(2));
 
 		if (eventsList.size() == 0 || eventsList == null) {
-			eventDao.addEvent(new Event(1, "AJBC final project",Category.TASK,2,0, LocalDateTime.of(2022, 7, 7, 8, 0),
+			eventDao.addEvent(new Event(eventOwner_1, "AJBC final project",Category.TASK,2,0, LocalDateTime.of(2022, 7, 7, 8, 0),
 					LocalDateTime.of(2022, 07, 14, 17, 0), "The topic: Doodle calender API.",
-					RepeatingType.NONE, new ArrayList<User>()));
+					RepeatingType.NONE, eventGuests_1));
 			
-			eventDao.addEvent(new Event(2, "Shira & Ran",Category.WEDDING,3,0, LocalDateTime.of(2022, 8, 4, 17, 0),
+			eventDao.addEvent(new Event(eventOwner_2, "Shira & Ran",Category.WEDDING,3,0, LocalDateTime.of(2022, 8, 4, 17, 0),
 					LocalDateTime.of(2022, 8, 5, 20, 0),
 					"The bridal evening begins at the-Lights Hall in Haifa, the singer begins an hour after the gathering.",
-					RepeatingType.NONE, guestsList));
+					RepeatingType.NONE, eventGuests_2));
 			
 		}
 

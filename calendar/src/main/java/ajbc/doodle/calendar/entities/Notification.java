@@ -1,7 +1,5 @@
 package ajbc.doodle.calendar.entities;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -41,12 +39,16 @@ public class Notification {
 	private Integer isSent;   // isSent=0(DEFAULT), unSent=1
 	
 	private Integer eventId;
+//	@ManyToOne
+//    @JoinColumn(name="eventId")
+//	private Event eventToNotify;
 	
 	public Notification(String title, String message, Unit unit, Integer quantity, Integer eventId) {
 		this.title = title;
 		this.message = message;
 		this.unit = unit;
 		this.quantity = quantity;
+		//this.eventToNotify = eventToNotify;
 		this.eventId = eventId;
 		this.inActive=0;
 		this.isSent=0;

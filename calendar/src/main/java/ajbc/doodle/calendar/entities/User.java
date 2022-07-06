@@ -1,17 +1,14 @@
 package ajbc.doodle.calendar.entities;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -43,9 +40,9 @@ public class User {
 	private Integer inActive; // inActive=1, active=0(DEFAULT)
 	
 	@JsonIgnore
-	@ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-	@JoinTable(name = "usersEvents", joinColumns = @JoinColumn(name = "userId"), inverseJoinColumns = @JoinColumn(name = "eventId"))
-	private List<Event> eventsList;
+	@ManyToMany(mappedBy="eventGuests")
+	private Set<Event> events = new HashSet<Event>();
+
 	
 	public User(String firstName, String lastName, String email, LocalDate birthDate, LocalDate joinDate) {
 		

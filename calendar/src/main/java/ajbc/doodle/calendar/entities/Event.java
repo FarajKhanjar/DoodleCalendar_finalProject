@@ -4,16 +4,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -40,8 +43,12 @@ public class Event {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer eventId;
 	
-	@Column(updatable = false)
+	@Column(updatable = false, insertable = false)
 	private Integer userId;
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "userId")
+	private User eventOwner;
 	
 	private String title;
 	
@@ -65,17 +72,17 @@ public class Event {
 	
 	private Integer inActive; // inActive=1, active=0(DEFAULT)
 	
-	@ManyToMany(mappedBy="eventsList", cascade = {CascadeType.MERGE})
+	//@JsonIgnore
+	@ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@JoinTable(name = "usersEvents", joinColumns = @JoinColumn(name = "eventId"), inverseJoinColumns = @JoinColumn(name = "userId"))
+	private Set<User> eventGuests;
+
 	@JsonIgnore
-	private List<User> guestsList;
+	@OneToMany(mappedBy = "eventToNotify", cascade = { CascadeType.MERGE })
+	private Set<Notification> notifications;
 	
-	@JsonIgnore
-	@OneToMany(cascade = {CascadeType.MERGE})
-	@JoinColumn(name = "notificationId")
-	private List<Notification> notificationsList;
-	
-	public Event(Integer userId, String title, Category category, Integer addressId, Integer isAllDay, LocalDateTime startDateTime,
-			LocalDateTime endDateTime, String description, RepeatingType repeatingType, List<User> guestsList) {
+	public Event(User eventOwner, String title, Category category, Integer addressId, Integer isAllDay, LocalDateTime startDateTime,
+			LocalDateTime endDateTime, String description, RepeatingType repeatingType, Set<User> eventGuests) {
 		this.userId = userId;
 		this.title = title;
 		this.category= category;
@@ -86,7 +93,7 @@ public class Event {
 		this.description = description;
 		this.repeatingType = repeatingType;
 		this.inActive = 0;
-		this.guestsList = guestsList;
+		this.eventGuests = eventGuests;
 	}
 	
 
