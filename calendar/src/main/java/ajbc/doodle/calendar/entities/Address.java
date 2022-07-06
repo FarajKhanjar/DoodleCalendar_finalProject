@@ -27,16 +27,12 @@ public class Address {
 	private String street;
 	private Integer number;
 	
-	//TODO
-//	public Address(String country, String city, String street, Integer number) {
-//
-//		this.country = country;
-//		this.city = city;
-//		this.street = street;
-//		this.number = number;
-//	}
-	
-	
-	
+	public Address(String country, String city, String street, Integer number) {
 
+		this.country = country;
+		this.city = city;
+		this.street = street;
+		this.number = number;
+	}
+	
 }
