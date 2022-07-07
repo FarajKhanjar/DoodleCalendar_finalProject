@@ -1,12 +1,17 @@
 package ajbc.doodle.calendar.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ajbc.doodle.calendar.daos.DaoException;
+import ajbc.doodle.calendar.daos.EventDao;
 import ajbc.doodle.calendar.daos.UserDao;
+import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.User;
 
 @Component
@@ -14,6 +19,9 @@ public class UserService {
 	
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private EventDao eventDao;
 
 	// CRUD
 	public List<User> getAllUsers() throws DaoException {
@@ -43,6 +51,12 @@ public class UserService {
 	
 	public void deleteUserHardly(User user) throws DaoException {
 		userDao.deleteUserHardly(user);	
+	}
+	
+	@Transactional
+	public List<User> getEventUsers(Integer eventId) throws DaoException {
+		Event event = eventDao.getEventById(eventId);
+		return event.getEventGuests().stream().collect(Collectors.toList());
 	}
 	
 }

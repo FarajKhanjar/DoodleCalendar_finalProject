@@ -18,6 +18,7 @@ import java.util.Set;
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.ErrorMessage;
+import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.services.UserService;
 
@@ -129,6 +130,21 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
 		}
 		
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, path = "/byEventId/{id}")
+	public ResponseEntity<?> getEventUsers(@PathVariable Integer id)  {
+		try {
+			List<User> users = userService.getEventUsers(id);
+			return ResponseEntity.ok(users);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMsg = new ErrorMessage();
+			errorMsg.setData(e.getMessage());
+			errorMsg.setMessage("Failed to get users of this event.");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
+			//TODO fix null list return
+		}
 	}
 	
 }
