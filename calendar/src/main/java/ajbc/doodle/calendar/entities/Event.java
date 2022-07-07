@@ -55,7 +55,6 @@ public class Event {
 	
 	@Enumerated(EnumType.STRING)
 	private Category category;
-	
 	@JsonIgnore
 	@Column(insertable = false, updatable = false)
 	private Integer addressId;
