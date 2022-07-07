@@ -80,16 +80,17 @@ public class EventController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, path = "/byUserId/{id}")
-	public ResponseEntity<List<Event>> getUserEvents(@PathVariable Integer userId) throws DaoException {
+	public ResponseEntity<?> getUserEvents(@PathVariable Integer id)  {
 		try {
-			List<Event> events = eventService.getUserEvents(userId);
+			List<Event> events = eventService.getUserEvents(id);
 			return ResponseEntity.ok(events);
 			
 		} catch (DaoException e) {
 			ErrorMessage errorMsg = new ErrorMessage();
 			errorMsg.setData(e.getMessage());
 			errorMsg.setMessage("Failed to get user events");
-			return ResponseEntity.status(HttpStatus.valueOf(500)).build();
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
+			//TODO fix null list return
 		}
 
 	}
