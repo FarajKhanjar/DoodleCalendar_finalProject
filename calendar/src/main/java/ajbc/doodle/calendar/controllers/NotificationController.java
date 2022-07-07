@@ -16,6 +16,7 @@ import java.util.List;
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.entities.ErrorMessage;
 import ajbc.doodle.calendar.entities.Notification;
+import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.services.NotificationService;
 
 
@@ -50,10 +51,10 @@ public class NotificationController {
 //	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<?> createNotification(@RequestBody Notification notification, @RequestParam int userId ,@RequestParam Integer eventId) {
+	public ResponseEntity<?> addNotification(@RequestBody Notification notification, @RequestParam int userId ,@RequestParam Integer eventId) {
 		try {
 
-			notificationService.createNotificationOfUserEvent(userId, eventId, notification);
+			notificationService.addNotificationOfUserEvent(userId, eventId, notification);
 			return ResponseEntity.status(HttpStatus.CREATED).build();
 			
 		} catch (DaoException e) {
@@ -77,6 +78,21 @@ public class NotificationController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMsg);
 		}
 
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, path = "/byEventId/{id}")
+	public ResponseEntity<?> getEventNotifications(@PathVariable Integer id)  {
+		try {
+			List<Notification> notifications = notificationService.getEventNotifications(id);
+			return ResponseEntity.ok(notifications);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMsg = new ErrorMessage();
+			errorMsg.setData(e.getMessage());
+			errorMsg.setMessage("Failed to get notifications of this event.");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
+			//TODO fix null list return
+		}
 	}
 
 }
