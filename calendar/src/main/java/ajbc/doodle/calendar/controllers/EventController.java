@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class EventController {
 		return ResponseEntity.ok(events);
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST, path = "/{id}")
 	public ResponseEntity<?> addEvent(@RequestBody Event event, @PathVariable Integer userId) {
 		try {
 			eventService.addEvent(event,userId);
@@ -47,14 +47,20 @@ public class EventController {
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, path = "/{id}")
-	public ResponseEntity<?> updateUser(@RequestBody Event event, @PathVariable Integer id) {
+	public ResponseEntity<?> updateUser(@RequestBody Event event, @RequestParam Integer userId ,@RequestParam Integer eventId) {
 		try {
-			event.setEventId(id);
+			if(eventService.checkIfUserIsTheOwner(eventId,userId)==false)
+				throw new DaoException("Just the event owner can edit his event.");
+			event.setEventId(eventId);
 			eventService.updateEvent(event);
-			event = eventService.getEventById(id);
+			event = eventService.getEventById(eventId);
 			return ResponseEntity.status(HttpStatus.OK).body(event);
+			
 		} catch (DaoException e) {
-			return ResponseEntity.status(HttpStatus.valueOf(500)).body(e.getMessage());
+			ErrorMessage errorMsg = new ErrorMessage();
+			errorMsg.setData(e.getMessage());
+			errorMsg.setMessage("Failed to update event in DB");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
 		}
 	}
 
@@ -69,6 +75,21 @@ public class EventController {
 			errorMsg.setData(e.getMessage());
 			errorMsg.setMessage("Failed to get event By this Id");
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMsg);
+		}
+
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, path = "/byUserId/{id}")
+	public ResponseEntity<List<Event>> getUserEvents(@PathVariable Integer userId) throws DaoException {
+		try {
+			List<Event> events = eventService.getUserEvents(userId);
+			return ResponseEntity.ok(events);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMsg = new ErrorMessage();
+			errorMsg.setData(e.getMessage());
+			errorMsg.setMessage("Failed to get user events");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).build();
 		}
 
 	}

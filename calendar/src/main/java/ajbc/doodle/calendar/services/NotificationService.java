@@ -6,14 +6,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ajbc.doodle.calendar.daos.DaoException;
+import ajbc.doodle.calendar.daos.EventDao;
 import ajbc.doodle.calendar.daos.NotificationDao;
+import ajbc.doodle.calendar.daos.UserDao;
+import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.Notification;
+import ajbc.doodle.calendar.entities.User;
 
 @Component
 public class NotificationService {
 	
 	@Autowired
 	private NotificationDao notificationDao;
+	
+	@Autowired
+	private UserDao userDao;
+	
+	@Autowired
+	private EventDao eventDao;
 
 	// CRUD
 	public List<Notification> getAllNotifications() throws DaoException {
@@ -28,5 +38,20 @@ public class NotificationService {
 	public Notification getNotificationById(Integer NotificationId) throws DaoException {
 		return notificationDao.getNotificationById(NotificationId);
 	}
+	
+	public void createNotificationOfUserEvent(int userId, int eventId, Notification notification) throws DaoException {
+		if (checkIfUserBelongToEvent(eventId, userId)==false)
+			throw new DaoException("The current user doesnt Belong to this Event");
+		
+		notification.setEventToNotify(eventDao.getEventById(eventId));
+		notification.setUserToNotify(userDao.getUserById(userId));
+		notificationDao.addNotification(notification);
+	}
+	
+	private boolean checkIfUserBelongToEvent(int eventId, int userId) throws DaoException {
+		Event event = eventDao.getEventById(eventId);
+		return event.getEventGuests().stream().map(User::getUserId).anyMatch(id -> id == userId);
+	}
+
 	
 }

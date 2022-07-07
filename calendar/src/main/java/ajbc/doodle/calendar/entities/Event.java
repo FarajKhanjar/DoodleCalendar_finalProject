@@ -1,9 +1,6 @@
 package ajbc.doodle.calendar.entities;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -11,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,10 +18,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import ajbc.doodle.calendar.enums.Category;
 import ajbc.doodle.calendar.enums.RepeatingType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,6 +34,7 @@ import lombok.ToString;
 @Getter
 @Setter 
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 @Entity
 @Table(name = "events")
@@ -43,11 +44,11 @@ public class Event {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer eventId;
 	
-	@Column(updatable = false, insertable = false)
-	private Integer userId;
 	@JsonIgnore
+	@Column(updatable = false, insertable = false)
+	private Integer eventOwnerId;
 	@ManyToOne
-	@JoinColumn(name = "userId")
+	@JoinColumn(name = "eventOwnerId")
 	private User eventOwner;
 	
 	private String title;
@@ -70,20 +71,20 @@ public class Event {
 	@Enumerated(EnumType.STRING)
 	private RepeatingType repeatingType;
 	
-	private Integer inActive; // inActive=1, active=0(DEFAULT)
-	
-	//@JsonIgnore
-	@ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
+	private Integer inActive; // inActive=1, active=0(DEFAULT)s
+
+	@ManyToMany(cascade = { CascadeType.MERGE })
+	@JsonProperty(access = Access.WRITE_ONLY)
 	@JoinTable(name = "usersEvents", joinColumns = @JoinColumn(name = "eventId"), inverseJoinColumns = @JoinColumn(name = "userId"))
 	private Set<User> eventGuests;
-
-	@JsonIgnore
+	
 	@OneToMany(mappedBy = "eventToNotify", cascade = { CascadeType.MERGE })
+	@JsonProperty(access = Access.WRITE_ONLY)
 	private Set<Notification> notifications;
 	
 	public Event(User eventOwner, String title, Category category, Integer addressId, Integer isAllDay, LocalDateTime startDateTime,
 			LocalDateTime endDateTime, String description, RepeatingType repeatingType, Set<User> eventGuests) {
-		this.userId = userId;
+		this.eventOwner = eventOwner;
 		this.title = title;
 		this.category= category;
 		this.addressId=addressId;
@@ -96,6 +97,4 @@ public class Event {
 		this.eventGuests = eventGuests;
 	}
 	
-
-
 }

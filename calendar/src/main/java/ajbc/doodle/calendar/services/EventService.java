@@ -44,9 +44,14 @@ public class EventService {
 	}
 	
 	@Transactional
-	public List<Event> getAllEventsOfUser(Integer userId) throws DaoException {
+	public List<Event> getUserEvents(Integer userId) throws DaoException {
 		User user = userDao.getUserById(userId);
 		return user.getEvents().stream().collect(Collectors.toList());
+	}
+	
+	public boolean checkIfUserIsTheOwner(int eventId, int userId) throws DaoException {
+		Event event = eventDao.getEventById(eventId);
+		return (event.getEventOwnerId() == userId);
 	}
 	
 }

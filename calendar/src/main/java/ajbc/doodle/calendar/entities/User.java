@@ -13,6 +13,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,9 +41,9 @@ public class User {
 	private LocalDate joinDate;
 	private Integer inActive; // inActive=1, active=0(DEFAULT)
 	
-	@JsonIgnore
+	@JsonProperty(access = Access.WRITE_ONLY)
 	@ManyToMany(mappedBy="eventGuests")
-	private Set<Event> events = new HashSet<Event>();
+	private Set<Event> events;
 
 	
 	public User(String firstName, String lastName, String email, LocalDate birthDate, LocalDate joinDate) {

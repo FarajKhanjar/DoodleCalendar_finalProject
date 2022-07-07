@@ -34,22 +34,35 @@ public class NotificationController {
 		return ResponseEntity.ok(allNotifications);
 	}
 
+//	@RequestMapping(method = RequestMethod.POST)
+//	public ResponseEntity<?> AddNotification(@RequestBody Notification notification) {
+//		try {
+//			notificationService.addNotification(notification);
+//			notification = notificationService.getNotificationById(notification.getNotificationId());
+//			return ResponseEntity.status(HttpStatus.CREATED).body(notification);
+//			
+//		} catch (DaoException e) {
+//			ErrorMessage errorMsg = new ErrorMessage();
+//			errorMsg.setData(e.getMessage());
+//			errorMsg.setMessage("Failed to add notification to DB");
+//			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
+//		}
+//	}
+	
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<?> AddNotification(@RequestBody Notification notification) {
+	public ResponseEntity<?> createNotification(@RequestBody Notification notification, @RequestParam int userId ,@RequestParam Integer eventId) {
 		try {
-			notificationService.addNotification(notification);
-			notification = notificationService.getNotificationById(notification.getNotificationId());
-			return ResponseEntity.status(HttpStatus.CREATED).body(notification);
+
+			notificationService.createNotificationOfUserEvent(userId, eventId, notification);
+			return ResponseEntity.status(HttpStatus.CREATED).build();
 			
 		} catch (DaoException e) {
 			ErrorMessage errorMsg = new ErrorMessage();
 			errorMsg.setData(e.getMessage());
-			errorMsg.setMessage("Failed to add notification to DB");
+			errorMsg.setMessage("Failed to add notification to the current event DB");
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
 		}
 	}
-
-	
 
 	@RequestMapping(method = RequestMethod.GET, path = "/byId/{id}")
 	public ResponseEntity<?> getNotificationById(@PathVariable Integer id) throws DaoException {
@@ -66,5 +79,4 @@ public class NotificationController {
 
 	}
 
-	
 }
