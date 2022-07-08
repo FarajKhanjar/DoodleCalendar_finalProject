@@ -31,6 +31,7 @@ public class User {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(updatable = false, nullable = false)
 	private Integer userId;
 	private String firstName;
 	private String lastName;

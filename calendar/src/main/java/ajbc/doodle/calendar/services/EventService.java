@@ -1,6 +1,8 @@
 package ajbc.doodle.calendar.services;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -13,6 +15,7 @@ import ajbc.doodle.calendar.daos.EventDao;
 import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.User;
+import ajbc.doodle.calendar.entities.Notification;
 
 @Component
 public class EventService {
@@ -46,7 +49,17 @@ public class EventService {
 	@Transactional
 	public List<Event> getUserEvents(Integer userId) throws DaoException {
 		User user = userDao.getUserById(userId);
-		return user.getEvents().stream().collect(Collectors.toList());
+		List<Event> userEventsList = user.getEvents().stream().collect(Collectors.toList());
+		List<Event> resultEventsList = new ArrayList<>();
+		for (Event oneEvent : userEventsList) {
+			Set<Notification> userEventNotifications = oneEvent.getNotifications().stream().filter(
+					notificationOfUser -> notificationOfUser.getUserId() == userId)
+					.collect(Collectors.toSet());
+			oneEvent.setNotifications(userEventNotifications);
+			resultEventsList.add(oneEvent);		
+		}
+		
+		return resultEventsList;
 	}
 	
 	public boolean checkIfUserIsTheOwner(int eventId, int userId) throws DaoException {

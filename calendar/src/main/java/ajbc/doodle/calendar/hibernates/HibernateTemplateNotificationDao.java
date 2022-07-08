@@ -2,12 +2,11 @@ package ajbc.doodle.calendar.hibernates;
 
 import java.util.List;
 
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.stereotype.Component;
+import org.hibernate.Criteria;
 
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.daos.NotificationDao;
@@ -24,7 +23,11 @@ public class HibernateTemplateNotificationDao implements NotificationDao {
 	@Override
 	public List<Notification> getAllNotifications() throws DaoException {
 		DetachedCriteria criteria = DetachedCriteria.forClass(Notification.class);
-		return (List<Notification>) template.findByCriteria(criteria);
+		     //Set the result transformer to use.
+		DetachedCriteria resultTransformer = criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		     //Each row of results is a distinct instance of the root entity.
+		List<Notification> resultList = (List<Notification>) template.findByCriteria(resultTransformer);
+		return resultList;
 	}
 	
 	@Override

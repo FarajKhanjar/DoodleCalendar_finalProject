@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -55,6 +56,7 @@ public class Event {
 	
 	@Enumerated(EnumType.STRING)
 	private Category category;
+	
 	@JsonIgnore
 	@Column(insertable = false, updatable = false)
 	private Integer addressId;
@@ -72,13 +74,12 @@ public class Event {
 	
 	private Integer inActive; // inActive=1, active=0(DEFAULT)s
 
-	@ManyToMany(cascade = { CascadeType.MERGE })
+	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE })
 	@JsonProperty(access = Access.WRITE_ONLY)
 	@JoinTable(name = "usersEvents", joinColumns = @JoinColumn(name = "eventId"), inverseJoinColumns = @JoinColumn(name = "userId"))
 	private Set<User> eventGuests;
 	
-	@OneToMany(mappedBy = "eventToNotify", cascade = { CascadeType.MERGE })
-	@JsonProperty(access = Access.WRITE_ONLY)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "eventToNotify", cascade = { CascadeType.MERGE })
 	private Set<Notification> notifications;
 	
 	public Event(User eventOwner, String title, Category category, Integer addressId, Integer isAllDay, LocalDateTime startDateTime,
