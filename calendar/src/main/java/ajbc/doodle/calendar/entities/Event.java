@@ -1,6 +1,7 @@
 package ajbc.doodle.calendar.entities;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -76,11 +77,19 @@ public class Event {
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE })
 	@JsonProperty(access = Access.WRITE_ONLY)
-	@JoinTable(name = "usersEvents", joinColumns = @JoinColumn(name = "eventId"), inverseJoinColumns = @JoinColumn(name = "userId"))
-	private Set<User> eventGuests;
+	@JoinTable(name = "usersEvents", joinColumns = @JoinColumn(name = "eventId"),
+	           inverseJoinColumns = @JoinColumn(name = "userId"))
+	private Set<User> eventGuests = new HashSet<User>();
 	
+	//Access.WRITE_ONLY
+	//may only be written (set) as part of deserialization but will not be read 
+	//value of the property is not included in serialization.
+	
+	//Access.READ_ONLY
+	//"read-only POJO", in which value contained may be read but not written/set.
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "eventToNotify", cascade = { CascadeType.MERGE })
-	private Set<Notification> notifications;
+	@JsonProperty(access = Access.READ_ONLY)
+	private Set<Notification> notifications = new HashSet<Notification>();
 	
 	public Event(User eventOwner, String title, Category category, Integer addressId, Integer isAllDay, LocalDateTime startDateTime,
 			LocalDateTime endDateTime, String description, RepeatingType repeatingType, Set<User> eventGuests) {

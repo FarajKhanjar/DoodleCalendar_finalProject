@@ -32,8 +32,8 @@ public class EventController {
 		return ResponseEntity.ok(events);
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<?> addEvent(@RequestBody Event event, @RequestParam Integer userId) {
+	@RequestMapping(method = RequestMethod.POST, path = "/{userId}")
+	public ResponseEntity<?> addEvent(@RequestBody Event event, @PathVariable Integer userId) {
 		try {
 			eventService.addEvent(event,userId);
 			event = eventService.getEventById(event.getEventId());
@@ -66,7 +66,7 @@ public class EventController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, path = "/byId/{id}")
-	public ResponseEntity<?> getEventById(@PathVariable Integer id) throws DaoException {
+	public ResponseEntity<?> getEventById(@PathVariable Integer id) {
 		try {
 			Event event = eventService.getEventById(id);
 			return ResponseEntity.ok(event);
@@ -80,11 +80,11 @@ public class EventController {
 
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, path = "/byUserId/{id}")
-	public ResponseEntity<?> getUserEvents(@PathVariable Integer id) {
+	@RequestMapping(method = RequestMethod.GET, path = "/byUserId/{userId}")
+	public ResponseEntity<?> getUserEvents(@PathVariable Integer userId) {
 		try {
-			List<Event> events = eventService.getUserEvents(id);
-			return ResponseEntity.ok(events);
+			List<Event> allUserEvents = eventService.getUserEvents(userId);
+			return ResponseEntity.ok(allUserEvents);
 			
 		} catch (DaoException e) {
 			ErrorMessage errorMsg = new ErrorMessage();
@@ -96,7 +96,7 @@ public class EventController {
 
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, path = "/byCategoryId/{category}")
+	@RequestMapping(method = RequestMethod.GET, path = "/byCategoryId/{categoryId}")
 	public ResponseEntity<?> getEventsByCategoryId(@PathVariable Integer categoryId) {
 		
 		List<Event> eventsOfCategory;

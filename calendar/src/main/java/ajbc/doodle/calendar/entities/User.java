@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -44,7 +43,7 @@ public class User {
 	
 	@JsonProperty(access = Access.WRITE_ONLY)
 	@ManyToMany(mappedBy="eventGuests")
-	private Set<Event> events;
+	private Set<Event> events = new HashSet<Event>();
 
 	
 	public User(String firstName, String lastName, String email, LocalDate birthDate, LocalDate joinDate) {
