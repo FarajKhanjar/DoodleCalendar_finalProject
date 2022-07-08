@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import ajbc.doodle.calendar.daos.DaoException;
+import ajbc.doodle.calendar.entities.Address;
 import ajbc.doodle.calendar.entities.ErrorMessage;
 import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.services.EventService;
@@ -80,7 +81,7 @@ public class EventController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, path = "/byUserId/{id}")
-	public ResponseEntity<?> getUserEvents(@PathVariable Integer id)  {
+	public ResponseEntity<?> getUserEvents(@PathVariable Integer id) {
 		try {
 			List<Event> events = eventService.getUserEvents(id);
 			return ResponseEntity.ok(events);
@@ -93,6 +94,40 @@ public class EventController {
 			//TODO fix null list return
 		}
 
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, path = "/byCategoryId/{category}")
+	public ResponseEntity<?> getEventsByCategoryId(@PathVariable Integer categoryId) {
+		
+		List<Event> eventsOfCategory;
+		try {
+			eventsOfCategory = eventService.getEventsByCategoryId(categoryId);
+			return ResponseEntity.ok(eventsOfCategory);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to get events By this category id");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+			//TODO fix null list return
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, path = "/byCategoryName/{categoryName}")
+	public ResponseEntity<?> getEventsByCategoryName(@PathVariable String categoryName) {
+		
+		List<Event> eventsOfCategory;
+		try {
+			eventsOfCategory = eventService.getEventsByCategoryName(categoryName.toUpperCase());
+			return ResponseEntity.ok(eventsOfCategory);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to get events By this category");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+			//TODO fix null list return
+		}
 	}
 	
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import ajbc.doodle.calendar.entities.Address;
 import ajbc.doodle.calendar.entities.Event;
 
 @Transactional(rollbackFor = { DaoException.class }, readOnly = true)
@@ -26,6 +27,14 @@ public interface EventDao {
 
 	// Queries
 	public default Event getEventById(Integer eventId) throws DaoException {
+		throw new DaoException("Method not implemented");
+	}
+	
+	public default List<Event> getEventsByCategoryId(Integer categoryId) throws DaoException {
+		throw new DaoException("Method not implemented");
+	}
+	
+	public default List<Event> getEventsByCategoryName(String categoryName) throws DaoException {
 		throw new DaoException("Method not implemented");
 	}
 

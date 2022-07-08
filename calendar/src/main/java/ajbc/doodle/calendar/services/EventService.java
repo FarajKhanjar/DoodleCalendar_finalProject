@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.daos.EventDao;
 import ajbc.doodle.calendar.daos.UserDao;
+import ajbc.doodle.calendar.entities.Address;
 import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.entities.Notification;
@@ -65,6 +66,14 @@ public class EventService {
 	public boolean checkIfUserIsTheOwner(int eventId, int userId) throws DaoException {
 		Event event = eventDao.getEventById(eventId);
 		return (event.getEventOwnerId() == userId);
+	}
+	
+	public List<Event> getEventsByCategoryId(Integer categoryId) throws DaoException {
+		return eventDao.getEventsByCategoryId(categoryId);
+	}
+	
+	public List<Event> getEventsByCategoryName(String categoryName) throws DaoException {
+		return eventDao.getEventsByCategoryName(categoryName);
 	}
 	
 }
