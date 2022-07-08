@@ -34,24 +34,9 @@ public class NotificationController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		return ResponseEntity.ok(allNotifications);
 	}
-
-//	@RequestMapping(method = RequestMethod.POST)
-//	public ResponseEntity<?> AddNotification(@RequestBody Notification notification) {
-//		try {
-//			notificationService.addNotification(notification);
-//			notification = notificationService.getNotificationById(notification.getNotificationId());
-//			return ResponseEntity.status(HttpStatus.CREATED).body(notification);
-//			
-//		} catch (DaoException e) {
-//			ErrorMessage errorMsg = new ErrorMessage();
-//			errorMsg.setData(e.getMessage());
-//			errorMsg.setMessage("Failed to add notification to DB");
-//			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
-//		}
-//	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<?> addNotification(@RequestBody Notification notification, @RequestParam int userId ,@RequestParam Integer eventId) {
+	public ResponseEntity<?> addNotification(@RequestBody Notification notification, @RequestParam Integer userId ,@RequestParam Integer eventId) {
 		try {
 
 			notificationService.addNotificationOfUserEvent(userId, eventId, notification);

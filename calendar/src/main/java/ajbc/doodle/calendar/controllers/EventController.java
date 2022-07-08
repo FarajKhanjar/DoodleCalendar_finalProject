@@ -32,8 +32,8 @@ public class EventController {
 		return ResponseEntity.ok(events);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, path = "/{id}")
-	public ResponseEntity<?> addEvent(@RequestBody Event event, @PathVariable Integer userId) {
+	@RequestMapping(method = RequestMethod.POST)
+	public ResponseEntity<?> addEvent(@RequestBody Event event, @RequestParam Integer userId) {
 		try {
 			eventService.addEvent(event,userId);
 			event = eventService.getEventById(event.getEventId());
@@ -47,8 +47,8 @@ public class EventController {
 		}
 	}
 
-	@RequestMapping(method = RequestMethod.PUT, path = "/{id}")
-	public ResponseEntity<?> updateUser(@RequestBody Event event, @RequestParam Integer userId ,@RequestParam Integer eventId) {
+	@RequestMapping(method = RequestMethod.PUT)
+	public ResponseEntity<?> updateEvent(@RequestBody Event event, @RequestParam Integer userId ,@RequestParam Integer eventId) {
 		try {
 			if(eventService.checkIfUserIsTheOwner(eventId,userId)==false)
 				throw new DaoException("Just the event owner can edit his event.");
