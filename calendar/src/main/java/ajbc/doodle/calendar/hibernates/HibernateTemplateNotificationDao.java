@@ -11,6 +11,7 @@ import org.hibernate.Criteria;
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.daos.NotificationDao;
 import ajbc.doodle.calendar.entities.Notification;
+import ajbc.doodle.calendar.entities.User;
 
 @Component(value = "HNT_notification")
 @SuppressWarnings("unchecked")
@@ -33,6 +34,11 @@ public class HibernateTemplateNotificationDao implements NotificationDao {
 	@Override
 	public void addNotification(Notification notification) throws DaoException {
 		template.persist(notification);
+	}
+	
+	@Override
+	public void updateNotification(Notification notification) throws DaoException {
+		template.merge(notification);
 	}
 
 

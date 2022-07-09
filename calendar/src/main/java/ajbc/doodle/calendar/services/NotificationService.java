@@ -41,6 +41,13 @@ public class NotificationService {
 		newNotification.setUserToNotify(userDao.getUserById(userId));
 		notificationDao.addNotification(newNotification);
 	}
+	
+    public void updateNotification(Notification notification, Integer userId) throws DaoException {
+		
+		if (userId.equals(notification.getUserId())==false)
+				throw new DaoException("Owner only can update notification");
+		notificationDao.updateNotification(notification);		
+	}
 
 	// Queries
 	public Notification getNotificationById(Integer NotificationId) throws DaoException {

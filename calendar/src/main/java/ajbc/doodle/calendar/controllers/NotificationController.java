@@ -15,6 +15,7 @@ import java.util.List;
 
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.entities.ErrorMessage;
+import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.Notification;
 import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.services.NotificationService;
@@ -47,6 +48,24 @@ public class NotificationController {
 			errorMsg.setData(e.getMessage());
 			errorMsg.setMessage("Failed to add notification to the current event DB");
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.PUT, path = "/{id}")
+	public ResponseEntity<?> updateNotification(@RequestBody Notification notification, @PathVariable Integer id, @RequestParam Integer userId) {
+		
+		try {
+			//TODO fix updating notification
+			notification.setNotificationId(id);
+			notificationService.updateNotification(notification, userId);
+			notification = notificationService.getNotificationById(notification.getNotificationId());
+			return ResponseEntity.status(HttpStatus.OK).body(notification);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("failed to update notification in db");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
 		}
 	}
 
