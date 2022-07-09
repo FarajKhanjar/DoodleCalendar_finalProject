@@ -29,11 +29,19 @@ public class HibernateTemplateUserDao implements UserDao {
 	
 	@Override
 	public void addUser(User user) throws DaoException {
+		if(checkIfEmailExist(user)==true)
+			throw new DaoException("This email is exist in 'users' DB.");
 		template.persist(user);
 	}
 	
 	@Override
 	public void updateUser(User user) throws DaoException {
+		if(!checkIfUserExist(user.getUserId()))
+			throw new DaoException("This user is exist in 'users' DB.");
+		
+		if(checkIfEmailExist(user))
+			throw new DaoException("This email is exist in 'users' DB.");
+		
 		template.merge(user);
 	}
 
@@ -56,6 +64,23 @@ public class HibernateTemplateUserDao implements UserDao {
 		if(users.size() == 0 || users == null)
 			throw new DaoException("There is no such user in 'users' DB with email: "+email);
 		return users.get(0);
+	}
+	
+	private boolean checkIfEmailExist(User user) throws DaoException {
+		List<User> allUsers = getAllUsers();
+		for(User oneUser : allUsers) {
+			if(oneUser.getUserId() != user.getUserId() 
+					&& oneUser.getEmail().equals(user.getEmail()))
+				return true;
+		}
+		return false;
+	}
+	
+	private boolean checkIfUserExist(Integer userId) {
+		User user = template.get(User.class, userId);
+		if (user != null)
+			return true;
+		return false;
 	}
 	
 	@Override
