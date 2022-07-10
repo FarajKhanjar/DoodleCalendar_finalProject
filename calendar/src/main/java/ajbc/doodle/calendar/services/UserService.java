@@ -65,8 +65,11 @@ public class UserService {
 	public void userLogin(Subscription subscription, String email) throws DaoException {
 		// if user exists - check by email
 		User user = getUserByEmail(email);
+		System.out.println("the mail: "+email);
+		System.out.println("the status: "+user.getUserOnline());
 		// 1 set login flag to true
 		user.setUserOnline(1);
+		System.out.println("the status: "+user.getUserOnline());
 		// 2 save subscription data
 		user.setEndPoint(subscription.getEndpoint());
 		user.setP256dh(subscription.getKeys().getP256dh());
@@ -74,5 +77,12 @@ public class UserService {
 		// 3 update new user
 		userDao.updateUser(user);
 	}
+	
+	public void userLogout(String email) throws DaoException {
+		User user = getUserByEmail(email);
+		user.setEndPoint(null);
+		user.setUserOnline(0);
+		userDao.updateUser(user);
+	}	
 
 }

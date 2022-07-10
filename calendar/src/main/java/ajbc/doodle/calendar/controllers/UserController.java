@@ -166,13 +166,19 @@ public class UserController {
 	
 	}
 	
-	@PostMapping("/isSubscribed")
-	public boolean isSubscribed(@RequestBody SubscriptionEndpoint subscription) throws DaoException {
-		List<User> users = userService.getAllUsers();
-		for(User u : users)
-			if(u.getEndPoint().equals(subscription.getEndpoint()))
-					return true;
-			return false;
+	@RequestMapping(method = RequestMethod.POST, path = "/logout/{email}")
+	public ResponseEntity<?> logOut(@PathVariable(required = false) String email) {
+		
+		try {
+			userService.userLogout(email);
+			return ResponseEntity.ok().body("User logged out");
+			
+		} catch (DaoException e) {
+			ErrorMessage errMsg = new ErrorMessage();
+			errMsg.setData(e.getMessage());
+			errMsg.setMessage("Failed to Logout user with this email: "+email);
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errMsg);
+		}
 	}
-	
+
 }

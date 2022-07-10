@@ -105,6 +105,7 @@ public class PushController {
 		System.out.println("Subscription with email " + email + " got removed!");
 		// if user exists -check by email
 		// 1 set login flag to false
+		
 	}
 
 	@PostMapping("/isSubscribed")
