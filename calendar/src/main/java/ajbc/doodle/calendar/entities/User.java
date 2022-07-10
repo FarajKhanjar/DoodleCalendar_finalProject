@@ -41,6 +41,7 @@ public class User {
 	
 	@Column(unique = true)
 	private String email;
+	
 	private LocalDate birthDate;
 	private LocalDate joinDate;
 	private Integer inActive; // inActive=1, active=0(DEFAULT)

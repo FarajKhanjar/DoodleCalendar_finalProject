@@ -153,5 +153,4 @@ async function subscribe() {
 	subscribeButton.disabled = true;
 	unsubscribeButton.disabled = false;
 	email.disabled = true;
-
 }

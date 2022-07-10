@@ -76,8 +76,10 @@ public class UserService {
 		//user.setEndPoint(subscription.getEndpoint());
 		//user.setP256dh(subscription.getKeys().getP256dh());
 		//user.setAuth(subscription.getKeys().getAuth());
+		
 		// 3 update new user
 		userDao.updateUser(user);
+		
 	}
 	
 	public void userLogout(String email) throws DaoException {
@@ -89,6 +91,7 @@ public class UserService {
 		                   +user.getLastName()+" unsubscribe]------");
 		System.out.println("Status user online: "+user.getUserOnline());
 		userDao.updateUser(user);
+		
 	}	
 	
 }
