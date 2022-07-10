@@ -20,6 +20,8 @@ import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.ErrorMessage;
 import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.User;
+import ajbc.doodle.calendar.entities.webpush.Subscription;
+import ajbc.doodle.calendar.entities.webpush.SubscriptionEndpoint;
 import ajbc.doodle.calendar.services.UserService;
 
 @RequestMapping("/users")
@@ -145,6 +147,32 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
 			//TODO fix null list return
 		}
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.POST, path = "/login/{email}")
+	public ResponseEntity<?> login(@RequestBody Subscription subscription, @PathVariable(required = false) String email) {
+		
+		try {
+			userService.userLogin(subscription, email);
+			return ResponseEntity.status(HttpStatus.OK).body(email);
+			
+		} catch (DaoException e) {
+			ErrorMessage errMsg = new ErrorMessage();
+			errMsg.setData(e.getMessage());
+			errMsg.setMessage("Failed to Login user with this email: "+email);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errMsg);
+		}
+	
+	}
+	
+	@PostMapping("/isSubscribed")
+	public boolean isSubscribed(@RequestBody SubscriptionEndpoint subscription) throws DaoException {
+		List<User> users = userService.getAllUsers();
+		for(User u : users)
+			if(u.getEndPoint().equals(subscription.getEndpoint()))
+					return true;
+			return false;
 	}
 	
 }

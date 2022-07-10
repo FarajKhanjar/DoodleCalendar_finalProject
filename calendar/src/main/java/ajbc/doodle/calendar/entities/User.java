@@ -45,6 +45,16 @@ public class User {
 	@ManyToMany(mappedBy="eventGuests")
 	private Set<Event> events = new HashSet<Event>();
 
+	//@JsonProperty(access = Access.WRITE_ONLY)
+	//private Long expirationTime;
+	@JsonProperty(access = Access.WRITE_ONLY)
+	private String endPoint;
+	@JsonProperty(access = Access.WRITE_ONLY)
+	private String p256dh;
+	@JsonProperty(access = Access.WRITE_ONLY)
+	private String auth;
+	
+	private Integer userOnline;
 	
 	public User(String firstName, String lastName, String email, LocalDate birthDate, LocalDate joinDate) {
 		

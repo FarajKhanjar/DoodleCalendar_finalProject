@@ -2,6 +2,7 @@ package ajbc.doodle.calendar.hibernates;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -24,7 +25,8 @@ public class HibernateTemplateUserDao implements UserDao {
 	@Override
 	public List<User> getAllUsers() throws DaoException {
 		DetachedCriteria criteria = DetachedCriteria.forClass(User.class);
-		return (List<User>) template.findByCriteria(criteria);
+		return (List<User>) template.findByCriteria(criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY));
+	
 	}
 	
 	@Override
@@ -36,7 +38,7 @@ public class HibernateTemplateUserDao implements UserDao {
 	
 	@Override
 	public void updateUser(User user) throws DaoException {
-		if(!checkIfUserExist(user.getUserId()))
+		if(checkIfUserExist(user.getUserId())==false)
 			throw new DaoException("This user is exist in 'users' DB.");
 		
 		if(checkIfEmailExist(user))

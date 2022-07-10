@@ -13,6 +13,7 @@ import ajbc.doodle.calendar.daos.EventDao;
 import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.User;
+import ajbc.doodle.calendar.entities.webpush.Subscription;
 
 @Component
 public class UserService {
@@ -59,4 +60,19 @@ public class UserService {
 		return event.getEventGuests().stream().collect(Collectors.toList());
 	}
 	
+	// Login + Logout
+
+	public void userLogin(Subscription subscription, String email) throws DaoException {
+		// if user exists - check by email
+		User user = getUserByEmail(email);
+		// 1 set login flag to true
+		user.setUserOnline(1);
+		// 2 save subscription data
+		user.setEndPoint(subscription.getEndpoint());
+		user.setP256dh(subscription.getKeys().getP256dh());
+		user.setAuth(subscription.getKeys().getAuth());
+		// 3 update new user
+		userDao.updateUser(user);
+	}
+
 }
