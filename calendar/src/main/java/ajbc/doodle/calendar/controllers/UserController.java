@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.ErrorMessage;
 import ajbc.doodle.calendar.entities.Event;
+import ajbc.doodle.calendar.entities.SubscriptionInfo;
 import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.entities.webpush.Subscription;
 import ajbc.doodle.calendar.entities.webpush.SubscriptionEndpoint;
@@ -149,35 +151,54 @@ public class UserController {
 		}
 	}
 	
-	
-	@RequestMapping(method = RequestMethod.POST, path = "/login/{email}")
-	public ResponseEntity<?> login(@RequestBody Subscription subscription, @PathVariable(required = false) String email) {
-		
+	@PostMapping("/subscribe/{email}")
+	@ResponseStatus(HttpStatus.CREATED)
+	public ResponseEntity<?> subscribe(@RequestBody Subscription subscription,
+			@PathVariable(required = false) String email) {
+
 		try {
-			userService.userLogin(subscription, email);
-			return ResponseEntity.status(HttpStatus.OK).body(email);
+
+			System.out.println("user email: "+email);
+			
+			String publicKey = subscription.getKeys().getP256dh();
+			String authKey = subscription.getKeys().getAuth();
+			String endPoint = subscription.getEndpoint();
+
+			System.out.println("------[subscription Info]------");
+			System.out.println("publicKey= "+publicKey);
+			System.out.println("authKey= "+authKey);
+			System.out.println("endPoint= "+endPoint);
+			
+			User user = userService.getUserByEmail(email);
+			SubscriptionInfo currentSubscriptionInfo = new SubscriptionInfo(publicKey, authKey, endPoint);
+			user.setSubscriptionInfo(currentSubscriptionInfo);
+			userService.updateUser(user);
+			userService.userLogin(email);
+			return ResponseEntity.ok("User online! login with this email: "+email);
 			
 		} catch (DaoException e) {
-			ErrorMessage errMsg = new ErrorMessage();
-			errMsg.setData(e.getMessage());
-			errMsg.setMessage("Failed to Login user with this email: "+email);
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errMsg);
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to login with this email "+email);
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
 		}
-	
+		
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, path = "/logout/{email}")
-	public ResponseEntity<?> logOut(@PathVariable(required = false) String email) {
-		
+	@PostMapping("/unsubscribe/{email}")
+	public ResponseEntity<?> unsubscribe(@RequestBody SubscriptionEndpoint subscription,
+			@PathVariable(required = false) String email) {
+
 		try {
+
 			userService.userLogout(email);
-			return ResponseEntity.ok().body("User logged out");
+			return ResponseEntity.ok("User offline! logout with this email: "+email);
 			
 		} catch (DaoException e) {
-			ErrorMessage errMsg = new ErrorMessage();
-			errMsg.setData(e.getMessage());
-			errMsg.setMessage("Failed to Logout user with this email: "+email);
-			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errMsg);
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to logout with this email "+email);
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
 		}
 	}
 

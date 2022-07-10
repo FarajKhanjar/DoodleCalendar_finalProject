@@ -62,27 +62,33 @@ public class UserService {
 	
 	// Login + Logout
 
-	public void userLogin(Subscription subscription, String email) throws DaoException {
+	public void userLogin(String email) throws DaoException {
+		
 		// if user exists - check by email
 		User user = getUserByEmail(email);
-		System.out.println("the mail: "+email);
-		System.out.println("the status: "+user.getUserOnline());
+		System.out.println("------["+user.getFirstName()+" "
+		                   +user.getLastName()+" subscribe]------");
 		// 1 set login flag to true
 		user.setUserOnline(1);
-		System.out.println("the status: "+user.getUserOnline());
+		System.out.println("Status user online: "+user.getUserOnline());
+		
 		// 2 save subscription data
-		user.setEndPoint(subscription.getEndpoint());
-		user.setP256dh(subscription.getKeys().getP256dh());
-		user.setAuth(subscription.getKeys().getAuth());
+		//user.setEndPoint(subscription.getEndpoint());
+		//user.setP256dh(subscription.getKeys().getP256dh());
+		//user.setAuth(subscription.getKeys().getAuth());
 		// 3 update new user
 		userDao.updateUser(user);
 	}
 	
 	public void userLogout(String email) throws DaoException {
+		
 		User user = getUserByEmail(email);
-		user.setEndPoint(null);
+		//user.setEndPoint(null);
 		user.setUserOnline(0);
+		System.out.println("------["+user.getFirstName()+" "
+		                   +user.getLastName()+" unsubscribe]------");
+		System.out.println("Status user online: "+user.getUserOnline());
 		userDao.updateUser(user);
 	}	
-
+	
 }

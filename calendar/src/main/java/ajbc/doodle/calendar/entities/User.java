@@ -4,14 +4,18 @@ import java.time.LocalDate;
 import java.util.Set;
 import java.util.HashSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -45,16 +49,12 @@ public class User {
 	@ManyToMany(mappedBy="eventGuests")
 	private Set<Event> events = new HashSet<Event>();
 
-	//@JsonProperty(access = Access.WRITE_ONLY)
-	//private Long expirationTime;
-	@JsonProperty(access = Access.WRITE_ONLY)
-	private String endPoint;
-	@JsonProperty(access = Access.WRITE_ONLY)
-	private String p256dh;
-	@JsonProperty(access = Access.WRITE_ONLY)
-	private String auth;
+	@JsonIgnore
+    @JoinColumn(name = "subDataId")	
+	@OneToOne(cascade = CascadeType.ALL)
+	private SubscriptionInfo subscriptionInfo;
 	
-	private Integer userOnline;
+	private Integer userOnline; // loggedIn=1, loggedOut=0(DEFAULT)
 	
 	public User(String firstName, String lastName, String email, LocalDate birthDate, LocalDate joinDate) {
 		
