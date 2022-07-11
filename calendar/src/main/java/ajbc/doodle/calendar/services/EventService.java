@@ -1,5 +1,6 @@
 package ajbc.doodle.calendar.services;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -80,6 +81,12 @@ public class EventService {
 		Event event = getEventById(eventId);
 		event.setInActive(1);
 		eventDao.updateEvent(event);
+	}
+	
+	@Transactional
+	public List<Event> getFutureEventsOfUser(Integer userId) throws DaoException {
+		List<Event> events = (getUserEvents(userId));
+		return events.stream().filter(t->t.getStartDateTime().isAfter(LocalDateTime.now())).toList();
 	}
 	
 }

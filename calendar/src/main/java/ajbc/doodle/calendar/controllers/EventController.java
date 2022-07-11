@@ -11,11 +11,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import ajbc.doodle.calendar.daos.DaoException;
+import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.Address;
 import ajbc.doodle.calendar.entities.ErrorMessage;
 import ajbc.doodle.calendar.entities.Event;
+import ajbc.doodle.calendar.entities.Notification;
+import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.services.EventService;
 
 
@@ -25,6 +30,9 @@ public class EventController {
 
 	@Autowired
 	private EventService eventService;
+	
+	@Autowired
+	private UserDao userDao;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<Event>> getAllEvents() throws DaoException {
@@ -130,4 +138,22 @@ public class EventController {
 		}
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, path="/futureEvents/{userId}")
+	public ResponseEntity<?> getFutureEventsOfUser(@PathVariable Integer userId) {
+		
+		List<Event> list;
+		try {
+			list = eventService.getFutureEventsOfUser(userId);
+			if (list == null)
+				return ResponseEntity.notFound().build();
+			return ResponseEntity.ok(list);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to get future events of this user with id "+userId);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+		}		
+	}
+
 }
