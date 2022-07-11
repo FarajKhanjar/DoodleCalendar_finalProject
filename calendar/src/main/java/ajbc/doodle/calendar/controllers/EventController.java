@@ -1,6 +1,7 @@
 package ajbc.doodle.calendar.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.lang.String;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
@@ -160,19 +162,19 @@ public class EventController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, path="/userEventsRange/{userId}")
-	public ResponseEntity<?> getUserEventsInDateRange(@PathVariable Integer userId) { 
-
-//, @RequestParam String startDate ,@RequestParam String endDate) {		
-//		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-//		LocalDateTime start = LocalDateTime.parse(startDate, formatter);
-//		LocalDateTime end = LocalDateTime.parse(endDate, formatter);
-//		System.out.println(start+"->"+end);
+	public ResponseEntity<?> getUserEventsInDateRange(@PathVariable Integer userId, 
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate){	
+		
+		System.out.println("------[Search for events in range of:]------");
+		System.out.println(startDate+"->"+endDate);
 		
 		List<Event> list;
 		try {
-			list = eventService.getUserEventsInDateRange(LocalDateTime.now(), LocalDateTime.now().plusDays(30), userId);
+			list = eventService.getUserEventsInDateRange(startDate, endDate, userId);
 			if (list == null)
 				return ResponseEntity.notFound().build();
+			
 			return ResponseEntity.ok(list);
 			
 		} catch (DaoException e) {
