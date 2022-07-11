@@ -25,6 +25,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ajbc.doodle.calendar.Application;
 import ajbc.doodle.calendar.ServerKeys;
+import ajbc.doodle.calendar.entities.webpush.PushMessage;
 import ajbc.doodle.calendar.entities.webpush.Subscription;
 import ajbc.doodle.calendar.entities.webpush.SubscriptionEndpoint;
 import ajbc.doodle.calendar.services.CryptoService;
@@ -46,6 +48,7 @@ import ajbc.doodle.calendar.services.CryptoService;
 @RestController
 public class PushController {
 
+	
 	private final ServerKeys serverKeys;
 	private final CryptoService cryptoService;
 	private final Map<String, Subscription> subscriptions = new ConcurrentHashMap<>();
@@ -101,23 +104,20 @@ public class PushController {
 		return this.subscriptions.containsKey(subscription.getEndpoint());
 	}
 
-//	@Scheduled(fixedDelay = 3_000)
-//	public void testNotification() {
-//		if (this.subscriptions.isEmpty()) {
-//			return;
-//		}
-//		counter++;
-//		try {
-//			
-//			Notification notification = new Notification(counter, LocalDateTime.now(), "Test notification", "Test message");
-//			sendPushMessageToAllSubscribers(this.subscriptions, new PushMessage("message: " + counter, notification.toString()));
-//			System.out.println(notification);
-//		} catch (JsonProcessingException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//	}
+	@Scheduled(fixedDelay = 3_000)
+	public void testNotification() {
+		if (this.subscriptions.isEmpty()) {
+			return;
+		}
+		counter++;
+		try {
+			sendPushMessageToAllSubscribers(this.subscriptions, new PushMessage("message: " + counter, "Try to notify"));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 	private void sendPushMessageToAllSubscribersWithoutPayload() {
 		Set<String> failedSubscriptions = new HashSet<>();
@@ -180,7 +180,7 @@ public class PushController {
 			httpRequestBuilder.POST(BodyPublishers.ofByteArray(body)).header("Content-Type", "application/octet-stream")
 					.header("Content-Encoding", "aes128gcm");
 		} else {
-			httpRequestBuilder.POST(BodyPublishers.ofString(""));
+			httpRequestBuilder.POST(BodyPublishers.ofString("trytry"));
 			// httpRequestBuilder.header("Content-Length", "0");
 		}
 
