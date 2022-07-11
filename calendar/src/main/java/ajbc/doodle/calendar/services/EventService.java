@@ -96,4 +96,11 @@ public class EventService {
 				                         oneEvent.getEndDateTime().isBefore(endDate)).toList();
 	}
 	
+	@Transactional
+	public List<Event> getAllEventsInDateRange(LocalDateTime startDate, LocalDateTime endDate) throws DaoException {
+		List<Event> allEvents = eventDao.getAllEvents();
+		return allEvents.stream().filter(oneEvent->oneEvent.getStartDateTime().isAfter(startDate) && 
+				                        oneEvent.getEndDateTime().isBefore(endDate)).toList();
+	}
+	
 }

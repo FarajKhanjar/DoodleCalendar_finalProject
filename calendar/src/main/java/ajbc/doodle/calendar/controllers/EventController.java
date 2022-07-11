@@ -13,19 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.lang.String;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import ajbc.doodle.calendar.daos.DaoException;
-import ajbc.doodle.calendar.daos.UserDao;
-import ajbc.doodle.calendar.entities.Address;
 import ajbc.doodle.calendar.entities.ErrorMessage;
 import ajbc.doodle.calendar.entities.Event;
-import ajbc.doodle.calendar.entities.Notification;
-import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.services.EventService;
 
 
@@ -35,9 +27,6 @@ public class EventController {
 
 	@Autowired
 	private EventService eventService;
-	
-	@Autowired
-	private UserDao userDao;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<Event>> getAllEvents() throws DaoException {
@@ -164,9 +153,17 @@ public class EventController {
 	@RequestMapping(method = RequestMethod.GET, path="/userEventsRange/{userId}")
 	public ResponseEntity<?> getUserEventsInDateRange(@PathVariable Integer userId, 
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate){	
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {	
 		
-		System.out.println("------[Search for events in range of:]------");
+		//TODO throw exception if dateFormat is wrong
+		if(!checkDateTimeValues(startDate,endDate)) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData("HttpStatus.BAD_REQUEST");
+			errorMessage.setMessage("Check ParamValue againe, startDateTime should be before endDateTime");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+		}
+		
+		System.out.println("------[Search for events in range dateTime of:]------");
 		System.out.println(startDate+"->"+endDate);
 		
 		List<Event> list;
@@ -174,15 +171,51 @@ public class EventController {
 			list = eventService.getUserEventsInDateRange(startDate, endDate, userId);
 			if (list == null)
 				return ResponseEntity.notFound().build();
-			
 			return ResponseEntity.ok(list);
 			
 		} catch (DaoException e) {
 			ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setData(e.getMessage());
-			errorMessage.setMessage("Failed to get events of user: "+userId+" in the current date range.");
+			errorMessage.setMessage("Failed to get events of user: "+userId+" in the current dateTime range.");
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 		}		
 	}
-
+	
+	@RequestMapping(method = RequestMethod.GET, path = "/allEventsRange")
+	public ResponseEntity<?> getAllEventsInDateRange( @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+		
+		//TODO throw exception if dateFormat is wrong
+		if(!checkDateTimeValues(startDate,endDate)) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData("HttpStatus.BAD_REQUEST");
+			errorMessage.setMessage("Check ParamValue againe, startDateTime should be before endDateTime");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+		}
+		
+		System.out.println("------[Search for events in range dateTime of:]------");
+		System.out.println(startDate+"->"+endDate);
+		
+		List<Event> list;
+		try {
+			list = eventService.getAllEventsInDateRange(startDate, endDate);
+			if (list == null)
+				return ResponseEntity.notFound().build();
+			
+			return ResponseEntity.ok(list);
+		
+			} catch (DaoException e) {
+				ErrorMessage errorMessage = new ErrorMessage();
+				errorMessage.setData(e.getMessage());
+				errorMessage.setMessage("Failed to get events in the current dateTime range.");
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+			}
+		
+		}
+		
+		private boolean checkDateTimeValues(LocalDateTime startDate, LocalDateTime endDate) {
+			if (startDate.compareTo(endDate) > 0)
+				return false;
+			return true;
+		}
 }
