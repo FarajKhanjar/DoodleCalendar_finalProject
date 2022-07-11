@@ -70,6 +70,7 @@ public class NotificationService {
 	public void inActiveNotification(Integer notificationId) throws DaoException {
 		Notification notification = getNotificationById(notificationId);
 		notification.setInActive(1);
+		//TODO make isSent inactive too
 		notificationDao.updateNotification(notification);		
 	}
 

@@ -69,12 +69,4 @@ public class Notification {
 
 	}
 
-	public Notification(String string, String string2, Unit minutes, int i) {
-		this.title = string;
-		this.message = string2;
-		this.unit = minutes;
-		this.quantity = i;
-	}
-	
-
 }
