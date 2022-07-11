@@ -76,4 +76,10 @@ public class EventService {
 		return eventDao.getEventsByCategoryName(categoryName);
 	}
 	
+	public void inActiveEvent(Integer eventId) throws DaoException {
+		Event event = getEventById(eventId);
+		event.setInActive(1);
+		eventDao.updateEvent(event);
+	}
+	
 }

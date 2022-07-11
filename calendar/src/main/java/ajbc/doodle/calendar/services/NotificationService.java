@@ -66,5 +66,11 @@ public class NotificationService {
 		return event.getEventGuests().stream()
 				.map(User::getUserId).anyMatch(i -> i == userId);
 	}
+	
+	public void inActiveNotification(Integer notificationId) throws DaoException {
+		Notification notification = getNotificationById(notificationId);
+		notification.setInActive(1);
+		notificationDao.updateNotification(notification);		
+	}
 
 }

@@ -92,6 +92,13 @@ public class UserService {
 		System.out.println("Status user online: "+user.getUserOnline());
 		userDao.updateUser(user);
 		
-	}	
+	}
+	
+	public void inActiveUser(Integer userId) throws DaoException {
+		User user = getUserById(userId);
+		user.setInActive(1);
+		// TODO: make events inactive too.
+		userDao.updateUser(user);
+	}
 	
 }

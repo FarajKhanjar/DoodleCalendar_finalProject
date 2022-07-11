@@ -201,5 +201,22 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
 		}
 	}
+	
+	@RequestMapping(method = RequestMethod.PUT, path="/inActive/{userId}")
+	public ResponseEntity<?> inActiveUser(@PathVariable Integer userId) {
+
+		try {
+			userService.inActiveUser(userId);
+			User user = userService.getUserById(userId);
+			return ResponseEntity.status(HttpStatus.OK).body(user);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to make user inActive in DB");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+
 
 }
