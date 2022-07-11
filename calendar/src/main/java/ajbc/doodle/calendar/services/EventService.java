@@ -85,8 +85,15 @@ public class EventService {
 	
 	@Transactional
 	public List<Event> getFutureEventsOfUser(Integer userId) throws DaoException {
-		List<Event> events = (getUserEvents(userId));
-		return events.stream().filter(t->t.getStartDateTime().isAfter(LocalDateTime.now())).toList();
+		List<Event> allUserEvents = getUserEvents(userId);
+		return allUserEvents.stream().filter(oneEvent-> oneEvent.getStartDateTime().isAfter(LocalDateTime.now())).toList();
+	}
+	
+	@Transactional
+	public List<Event> getUserEventsInDateRange(LocalDateTime startDate, LocalDateTime endDate, Integer userId) throws DaoException {
+		List<Event> allUserEvents = getUserEvents(userId);
+		return allUserEvents.stream().filter(oneEvent-> oneEvent.getStartDateTime().isAfter(startDate) &&
+				                         oneEvent.getEndDateTime().isBefore(endDate)).toList();
 	}
 	
 }

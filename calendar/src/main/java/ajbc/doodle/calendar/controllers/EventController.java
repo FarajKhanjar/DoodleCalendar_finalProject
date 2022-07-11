@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -152,6 +155,30 @@ public class EventController {
 			ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setData(e.getMessage());
 			errorMessage.setMessage("Failed to get future events of this user with id "+userId);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+		}		
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, path="/userEventsRange/{userId}")
+	public ResponseEntity<?> getUserEventsInDateRange(@PathVariable Integer userId) { 
+
+//, @RequestParam String startDate ,@RequestParam String endDate) {		
+//		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+//		LocalDateTime start = LocalDateTime.parse(startDate, formatter);
+//		LocalDateTime end = LocalDateTime.parse(endDate, formatter);
+//		System.out.println(start+"->"+end);
+		
+		List<Event> list;
+		try {
+			list = eventService.getUserEventsInDateRange(LocalDateTime.now(), LocalDateTime.now().plusDays(30), userId);
+			if (list == null)
+				return ResponseEntity.notFound().build();
+			return ResponseEntity.ok(list);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to get events of user: "+userId+" in the current date range.");
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
 		}		
 	}
