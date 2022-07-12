@@ -56,7 +56,8 @@ public class PushManager implements Runnable {
 			System.out.println(
 					"Event: " + notification.getEventToNotify().getTitle() + " Title: " + notification.getTitle()
 							+ " Message: " + notification.getMessage() + " sent to user " + user.getEmail());
-
+			notification.setIsSent(1);
+			
 		} catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException
 				| InvalidAlgorithmParameterException | NoSuchPaddingException | IllegalBlockSizeException
 				| BadPaddingException | JsonProcessingException e) {

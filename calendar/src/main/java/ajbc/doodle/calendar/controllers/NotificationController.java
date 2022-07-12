@@ -154,7 +154,7 @@ public class NotificationController {
 	}
 	
 	@Scheduled(initialDelay = 2000 ,fixedDelay = 6000)
-	public void run() throws DaoException {
+	public void run() throws DaoException, InterruptedException {
 		notificationManager.setDataManager(dataManager);
 		List<Notification> notifications = notificationDao.getAllNotifications();
 		notificationManager.addNotification(notifications);
