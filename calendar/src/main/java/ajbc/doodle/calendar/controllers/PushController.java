@@ -1,61 +1,62 @@
-//package ajbc.doodle.calendar.controllers;
-//
-//import java.io.IOException;
-//import java.net.MalformedURLException;
-//import java.net.URI;
-//import java.net.URL;
-//import java.net.http.HttpClient;
-//import java.net.http.HttpRequest;
-//import java.net.http.HttpRequest.BodyPublishers;
-//import java.net.http.HttpRequest.Builder;
-//import java.net.http.HttpResponse;
-//import java.net.http.HttpResponse.BodyHandlers;
-//import java.security.InvalidAlgorithmParameterException;
-//import java.security.InvalidKeyException;
-//import java.security.NoSuchAlgorithmException;
-//import java.security.spec.InvalidKeySpecException;
-//import java.util.Date;
-//import java.util.HashSet;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.Set;
-//import java.util.concurrent.ConcurrentHashMap;
-//
-//import javax.crypto.BadPaddingException;
-//import javax.crypto.IllegalBlockSizeException;
-//import javax.crypto.NoSuchPaddingException;
-//
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.scheduling.annotation.Scheduled;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.PathVariable;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.ResponseStatus;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//import com.auth0.jwt.JWT;
-//import com.auth0.jwt.algorithms.Algorithm;
-//import com.fasterxml.jackson.core.JsonProcessingException;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//
-//import ajbc.doodle.calendar.Application;
-//import ajbc.doodle.calendar.ServerKeys;
-//import ajbc.doodle.calendar.daos.DaoException;
-//import ajbc.doodle.calendar.daos.NotificationDao;
-//import ajbc.doodle.calendar.daos.UserDao;
-//import ajbc.doodle.calendar.entities.Notification;
-//import ajbc.doodle.calendar.entities.User;
-//import ajbc.doodle.calendar.entities.webpush.PushMessage;
-//import ajbc.doodle.calendar.entities.webpush.Subscription;
-//import ajbc.doodle.calendar.entities.webpush.SubscriptionEndpoint;
-//import ajbc.doodle.calendar.services.CryptoService;
-//
+/*package ajbc.doodle.calendar.controllers;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpRequest.Builder;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ajbc.doodle.calendar.Application;
+import ajbc.doodle.calendar.ServerKeys;
+import ajbc.doodle.calendar.daos.DaoException;
+import ajbc.doodle.calendar.daos.NotificationDao;
+import ajbc.doodle.calendar.daos.UserDao;
+import ajbc.doodle.calendar.entities.Notification;
+import ajbc.doodle.calendar.entities.User;
+import ajbc.doodle.calendar.entities.webpush.PushMessage;
+import ajbc.doodle.calendar.entities.webpush.Subscription;
+import ajbc.doodle.calendar.entities.webpush.SubscriptionEndpoint;
+import ajbc.doodle.calendar.services.CryptoService;
+*/
+
 //@RestController
 //public class PushController {
-
-	
+//
+//	
 //	private final ServerKeys serverKeys;
 //	private final CryptoService cryptoService;
 //	private final Map<String, Subscription> subscriptions = new ConcurrentHashMap<>();
@@ -116,26 +117,25 @@
 //	public boolean isSubscribed(@RequestBody SubscriptionEndpoint subscription) {
 //		return this.subscriptions.containsKey(subscription.getEndpoint());
 //	}
-
-//	@Scheduled(fixedDelay = 3_000)
-//	public void testNotification() {
-//		if (this.subscriptions.isEmpty()) {
-//			return;
-//		}
-//		counter++;
-//		try {
-//			sendPushMessageToAllSubscribers(this.subscriptions, new PushMessage("message: " + counter, "Try to notify"));
-//		} catch (JsonProcessingException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 //
-//	}
-	
+////	@Scheduled(fixedDelay = 3_000)
+////	public void testNotification() {
+////		if (this.subscriptions.isEmpty()) {
+////			return;
+////		}
+////		counter++;
+////		try {
+////			sendPushMessageToAllSubscribers(this.subscriptions, new PushMessage("message: " + counter, "Try to notify"));
+////		} catch (JsonProcessingException e) {
+////			// TODO Auto-generated catch block
+////			e.printStackTrace();
+////		}
+////	}
+//	
 //	public void testNotification() throws DaoException {
 //		List<User> users = userDao.getAllUsers();
-//		List<Notification> notif = notificationDao.getAllNotifications();
-//		Object message = new PushMessage("message: ", notif.get(0).getTitle());
+//		List<Notification> notifications = notificationDao.getAllNotifications();
+//		Object message = new PushMessage(notifications.get(1).getTitle(), notifications.get(1).getMessage());
 //
 //		users.forEach(u -> {if(u.getUserOnline()==1) {
 //			byte[] result;
@@ -143,6 +143,7 @@
 //				result = this.cryptoService.encrypt(this.objectMapper.writeValueAsString(message),
 //						u.getSubscriptionInfo().getPublicKey(), u.getSubscriptionInfo().getAuthKey(), 0);
 //				sendPushMessage(u.getSubscriptionInfo().getEndpoint(),result);
+//				
 //			} catch (InvalidKeyException  | NoSuchAlgorithmException | InvalidKeySpecException
 //					| InvalidAlgorithmParameterException | NoSuchPaddingException | IllegalBlockSizeException
 //					| BadPaddingException | JsonProcessingException e) {
@@ -153,7 +154,7 @@
 //		}
 //			});
 //	}
-
+//
 //	private void sendPushMessageToAllSubscribersWithoutPayload() {
 //		Set<String> failedSubscriptions = new HashSet<>();
 //		for (Subscription subscription : this.subscriptions.values()) {
@@ -164,7 +165,7 @@
 //		}
 //		failedSubscriptions.forEach(this.subscriptions::remove);
 //	}
-
+//
 //	private void sendPushMessageToAllSubscribers(Map<String, Subscription> subs, Object message)
 //			throws JsonProcessingException {
 //
@@ -187,11 +188,11 @@
 //
 //		failedSubscriptions.forEach(subs::remove);
 //	}
-
-	/**
-	 * @return true if the subscription is no longer valid and can be removed, false
-	 *         if everything is okay
-	 */
+//
+//	/**
+//	 * @return true if the subscription is no longer valid and can be removed, false
+//	 *         if everything is okay
+//	 */
 //	private boolean sendPushMessage(String endPoint, byte[] body) {
 //		String origin = null;
 //		try {
@@ -248,9 +249,6 @@
 //		} catch (IOException | InterruptedException e) {
 //			Application.logger.error("send push message", e);
 //		}
-//
-//		return false;
-//		
+//		return false;	
 //	}
-//	
 //}

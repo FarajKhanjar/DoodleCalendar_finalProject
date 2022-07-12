@@ -29,5 +29,4 @@ public class DataManager {
 		this.objectMapper = objectMapper;
 		this.jwtAlgorithm = Algorithm.ECDSA256(this.serverKeys.getPublicKey(), this.serverKeys.getPrivateKey());
 	}
-
 }
