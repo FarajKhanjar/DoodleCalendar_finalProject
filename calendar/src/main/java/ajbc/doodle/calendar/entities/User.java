@@ -7,6 +7,7 @@ import java.util.HashSet;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -46,8 +47,8 @@ public class User {
 	private LocalDate joinDate;
 	private Integer inActive; // inActive=1, active=0(DEFAULT)
 	
-	@JsonProperty(access = Access.WRITE_ONLY)
-	@ManyToMany(mappedBy="eventGuests")
+	@JsonIgnore
+	@ManyToMany(mappedBy="eventGuests", fetch = FetchType.EAGER)
 	private Set<Event> events = new HashSet<Event>();
 
 	@JsonIgnore

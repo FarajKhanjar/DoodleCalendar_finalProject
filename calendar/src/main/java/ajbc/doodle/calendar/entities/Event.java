@@ -76,17 +76,11 @@ public class Event {
 	private Integer inActive; // inActive=1, active=0(DEFAULT)s
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE })
-	@JsonProperty(access = Access.WRITE_ONLY)
+	@JsonProperty(access = Access.READ_ONLY)
 	@JoinTable(name = "usersEvents", joinColumns = @JoinColumn(name = "eventId"),
 	           inverseJoinColumns = @JoinColumn(name = "userId"))
 	private Set<User> eventGuests = new HashSet<User>();
 	
-	//Access.WRITE_ONLY
-	//may only be written (set) as part of deserialization but will not be read 
-	//value of the property is not included in serialization.
-	
-	//Access.READ_ONLY
-	//"read-only POJO", in which value contained may be read but not written/set.
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "eventToNotify", cascade = { CascadeType.MERGE })
 	@JsonProperty(access = Access.READ_ONLY)
 	private Set<Notification> notifications = new HashSet<Notification>();

@@ -47,14 +47,14 @@ public class Notification {
 	private Integer eventId;
 	@ManyToOne
     @JoinColumn(name="eventId")
-	@JsonProperty(access = Access.WRITE_ONLY)
+	@JsonIgnore
 	private Event eventToNotify;
 	
 	@Column(insertable = false, updatable = false)
 	private Integer userId;
 	@ManyToOne
     @JoinColumn(name="userId")
-	@JsonProperty(access = Access.WRITE_ONLY)
+	@JsonIgnore
 	private User userToNotify;
 	
 	public Notification(String title, String message, Unit unit, Integer quantity, Event eventToNotify, User userToNotify) {
