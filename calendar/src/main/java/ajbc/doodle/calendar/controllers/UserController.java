@@ -202,6 +202,15 @@ public class UserController {
 		}
 	}
 	
+	@PostMapping("/isSubscribed")
+	public boolean isSubscribed(@RequestBody SubscriptionEndpoint subscription) throws DaoException {
+		List<User> allUsers = userService.getAllUsers();
+		for(User oneUser : allUsers)
+			if(oneUser.getSubscriptionInfo().getEndpoint().equals(subscription.getEndpoint()))
+					return true;
+			return false;
+	}
+	
 	@RequestMapping(method = RequestMethod.PUT, path="/inActive/{userId}")
 	public ResponseEntity<?> inActiveUser(@PathVariable Integer userId) {
 

@@ -1,8 +1,7 @@
-package ajbc.doodle.calendar.dataBase;
+package ajbc.doodle.calendar.managers;
 
+import java.util.List;
 import java.util.PriorityQueue;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
@@ -12,24 +11,24 @@ import org.springframework.stereotype.Component;
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.entities.Notification;
 import ajbc.doodle.calendar.services.NotificationService;
-import ajbc.doodle.calendar.services.UserService;
+import lombok.Setter;
 
+@Setter
 @Component
 public class NotificationManager {
-	
+
 	@Autowired
 	NotificationService notificationService;
 	
-	@Autowired
-	private UserService userService;
-	
 	private PriorityQueue<Notification> queue;
-	private ScheduledThreadPoolExecutor pool;
-	private final int NUM_THREADS = 3;
+//	private ScheduledThreadPoolExecutor pool;
+//	private final int NUM_THREADS = 3;
+	
+	private DataManager managerData;
 	
 	public NotificationManager() 
 	{
-		this.pool = new ScheduledThreadPoolExecutor(NUM_THREADS);
+		//this.pool = new ScheduledThreadPoolExecutor(NUM_THREADS);
 		this.queue = new PriorityQueue<Notification>((n1,n2) -> n1.getEventToNotify().getStartDateTime()
 				.compareTo(n2.getEventToNotify().getStartDateTime()));
 	}
@@ -40,13 +39,9 @@ public class NotificationManager {
 
 	}
 	
-	public void addNotification(Notification notification) {
-		queue.add(notification);
-		
-		if (notification.getEventToNotify().getStartDateTime()
-				.isBefore(queue.peek().getEventToNotify().getStartDateTime())) {
-
-		}
+	public void addNotification(List<Notification> notifications) {
+		for (int i = 0; i < notifications.size(); i++)
+			queue.add(notifications.get(i));
 	}
 	
 	public void run() {
