@@ -1,6 +1,9 @@
 package ajbc.doodle.calendar.services;
 
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -58,6 +61,10 @@ public class UserService {
 	public List<User> getEventUsers(Integer eventId) throws DaoException {
 		Event event = eventDao.getEventById(eventId);
 		return event.getEventGuests().stream().collect(Collectors.toList());
+	}
+	
+	public List<User> getAllUsersInRangeDateEvent(LocalDateTime startDate, LocalDateTime endDate) throws DaoException {	
+		return userDao.getAllUsersInRangeDateEvent(startDate, endDate);
 	}
 	
 	// Login + Logout

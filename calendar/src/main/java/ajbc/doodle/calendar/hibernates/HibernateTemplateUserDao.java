@@ -1,5 +1,6 @@
 package ajbc.doodle.calendar.hibernates;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -94,6 +95,15 @@ public class HibernateTemplateUserDao implements UserDao {
 	@Override
 	public void deleteUserHardly(User user) throws DaoException {
 		template.delete(user);
+	}
+	
+	@Override
+	public List<User> getAllUsersInRangeDateEvent(LocalDateTime stateDate, LocalDateTime endDate) throws DaoException {
+		DetachedCriteria criteria = DetachedCriteria.forClass(User.class).createCriteria("events");
+		criteria.add(Restrictions.ge("startDateTime", stateDate));
+		criteria.add(Restrictions.le("endDateTime", endDate));
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		return (List<User>) template.findByCriteria(criteria);
 	}
 
 }

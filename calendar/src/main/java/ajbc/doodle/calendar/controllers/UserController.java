@@ -1,6 +1,7 @@
 package ajbc.doodle.calendar.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -149,6 +151,44 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
 			//TODO fix null list return
 		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, path = "/eventsRange")
+	public ResponseEntity<?> getAllUsersInRangeDateEvent( @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+		
+		//TODO throw exception if dateFormat is wrong
+		if(!checkDateTimeValues(startDate,endDate)) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData("HttpStatus.BAD_REQUEST");
+			errorMessage.setMessage("Check ParamValue againe, startDateTime should be before endDateTime");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+		}
+		
+		System.out.println("------[Search for users in range dateTime of:]------");
+		System.out.println(startDate+"->"+endDate);
+		
+		List<User> list;
+		try {
+			list = userService.getAllUsersInRangeDateEvent(startDate, endDate);
+			if (list == null)
+				return ResponseEntity.notFound().build();
+			
+			return ResponseEntity.ok(list);
+		
+			} catch (DaoException e) {
+				ErrorMessage errorMessage = new ErrorMessage();
+				errorMessage.setData(e.getMessage());
+				errorMessage.setMessage("Failed to get users in the current dateTime range.");
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+			}
+		
+		}
+	
+	private boolean checkDateTimeValues(LocalDateTime startDate, LocalDateTime endDate) {
+		if (startDate.compareTo(endDate) > 0)
+			return false;
+		return true;
 	}
 	
 	@PostMapping("/subscribe/{email}")
