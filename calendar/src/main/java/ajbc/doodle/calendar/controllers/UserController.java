@@ -28,6 +28,11 @@ import ajbc.doodle.calendar.entities.webpush.Subscription;
 import ajbc.doodle.calendar.entities.webpush.SubscriptionEndpoint;
 import ajbc.doodle.calendar.services.UserService;
 
+/**
+ * User Controller that implements the User-API
+ * @author Faraj
+ *
+ */
 @RequestMapping("/users")
 @RestController
 public class UserController {
@@ -35,6 +40,11 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	/**
+	 * This method get all users from the Sql dataBase
+	 * @return list of users from the DB. or,
+	 * @throws DaoException if there is a error to get 'allUsers' list  or not found.
+	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<User>> getAllUsers() throws DaoException {
 		List<User> allUsers = userService.getAllUsers();
@@ -43,6 +53,11 @@ public class UserController {
 		return ResponseEntity.ok(allUsers);
 	}
 
+	/**
+	 * This method add a new user to the DataBase.
+	 * @param user: The body of the new user.
+	 * @return a new user, or get a error message if add user is fail.
+	 */
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> addUser(@RequestBody User user) {
 		try {
@@ -58,6 +73,12 @@ public class UserController {
 		}
 	}
 
+	/**
+	 * This method updates the a user using his id.
+	 * @param user: The updated body of the user.
+	 * @param id: key to update and save the updated user.
+	 * @return a updated new or a error message if update user is fail.
+	 */
 	@RequestMapping(method = RequestMethod.PUT, path = "/byId/{id}")
 	public ResponseEntity<?> updateUser(@RequestBody User user, @PathVariable Integer id) {
 		try {
@@ -74,6 +95,12 @@ public class UserController {
 		}
 	}
 
+	/**
+	 * This method get the user that have this id number
+	 * @param id: the key to search and get the user.
+	 * @return the user that have this id, or
+	 * @throws DaoException if searching for user is fail to get.
+	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/byId/{id}")
 	public ResponseEntity<?> getUserById(@PathVariable Integer id) throws DaoException {
 		try {
@@ -89,6 +116,12 @@ public class UserController {
 
 	}
 
+	/**
+	 * This method get the user that have this email
+	 * @param email: the key to search and get the user.
+	 * @return the user that have this email, or
+	 * @throws DaoException if searching for user is fail to get.
+	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/byEmail/{email}")
 	public ResponseEntity<?> getUserByEmail(@PathVariable String email) throws DaoException {
 		try {
@@ -103,6 +136,12 @@ public class UserController {
 		}
 	}
 	
+	/**
+	 * This method do a soft delete of the a user using his id.
+	 * @param id: the key to get the user from DB
+	 * @return updated user that have a value = 1 in failed = inActive. or,
+	 * @throws DaoException if deleting softly of user is fail.
+	 */
 	@RequestMapping(method = RequestMethod.DELETE,path = "/softly/{id}")
 	public ResponseEntity<?> deleteUserSoftly(@PathVariable Integer id) throws DaoException {
 		try {
@@ -120,6 +159,12 @@ public class UserController {
 		
 	}
 	
+	/**
+	 * This method do a hard delete of the a user using his id.
+	 * @param id: the key to get the user from DB
+	 * @return a message that the delete done or not, and delete user totally from DB. or,
+	 * @throws DaoException if deleting hardly of user is fail.
+	 */
 	@RequestMapping(method = RequestMethod.DELETE,path = "/hardly/{id}")
 	public ResponseEntity<?> deleteUserHardly(@PathVariable Integer id) throws DaoException {
 		// TODO fix it
@@ -138,6 +183,11 @@ public class UserController {
 		
 	}
 	
+	/**
+	 * This method get all users of an event by event id
+	 * @param id: the key to get the event from DB
+	 * @return the users that have this event id.
+	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/byEventId/{id}")
 	public ResponseEntity<?> getEventUsers(@PathVariable Integer id)  {
 		try {
@@ -153,6 +203,13 @@ public class UserController {
 		}
 	}
 	
+	/**
+	 * This method get all user that have an event between start date and time to end date and time.
+	 * @param startDate: in format of '2022-09-01T00:00'
+	 * @param endDate: also in format of '2022-09-01T00:00'
+	 * @return all users that have events in this dateTime range. or,
+	 *         get a error message if searching for user is fail to get.
+	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/eventsRange")
 	public ResponseEntity<?> getAllUsersInRangeDateEvent( @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
@@ -185,12 +242,43 @@ public class UserController {
 		
 		}
 	
+	/**
+	 * This is a handle method for check if the entering of the date in Postman is correct.
+	 * @return false or true.
+	 */
 	private boolean checkDateTimeValues(LocalDateTime startDate, LocalDateTime endDate) {
 		if (startDate.compareTo(endDate) > 0)
 			return false;
 		return true;
 	}
 	
+	/**
+	 * This method get all users inActive or not
+	 * @param userId: the key to get the user from DB
+	 * @return all users that inActivity
+	 */
+	@RequestMapping(method = RequestMethod.PUT, path="/inActive/{userId}")
+	public ResponseEntity<?> inActiveUser(@PathVariable Integer userId) {
+
+		try {
+			userService.inActiveUser(userId);
+			User user = userService.getUserById(userId);
+			return ResponseEntity.status(HttpStatus.OK).body(user);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to make user inActive in DB");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
+	/**
+	 * This method is the LogIn of user.
+	 * @param subscription: the data that sent from the browser and save in Sql table.
+	 * @param email: the user email
+	 * @return success message to login. or error message if failed.
+	 */
 	@PostMapping("/subscribe/{email}")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> subscribe(@RequestBody Subscription subscription,
@@ -225,6 +313,12 @@ public class UserController {
 		
 	}
 	
+	/**
+	 * This method is the LogOut of user.
+	 * @param subscription: the end point from browser
+	 * @param email: the user email
+	 * @return success message to logout. or error message if failed.
+	 */
 	@PostMapping("/unsubscribe/{email}")
 	public ResponseEntity<?> unsubscribe(@RequestBody SubscriptionEndpoint subscription,
 			@PathVariable(required = false) String email) {
@@ -242,6 +336,12 @@ public class UserController {
 		}
 	}
 	
+	/**
+	 * This method check if a user is currently subscribed to push messages by checking his end point
+	 * @param subscription: the end point from browser
+	 * @return true if a user is subscribed, false if not
+	 * @throws DaoException
+	 */
 	@PostMapping("/isSubscribed")
 	public boolean isSubscribed(@RequestBody SubscriptionEndpoint subscription) throws DaoException {
 		List<User> allUsers = userService.getAllUsers();
@@ -251,21 +351,4 @@ public class UserController {
 			return false;
 	}
 	
-	@RequestMapping(method = RequestMethod.PUT, path="/inActive/{userId}")
-	public ResponseEntity<?> inActiveUser(@PathVariable Integer userId) {
-
-		try {
-			userService.inActiveUser(userId);
-			User user = userService.getUserById(userId);
-			return ResponseEntity.status(HttpStatus.OK).body(user);
-			
-		} catch (DaoException e) {
-			ErrorMessage errorMessage = new ErrorMessage();
-			errorMessage.setData(e.getMessage());
-			errorMessage.setMessage("Failed to make user inActive in DB");
-			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
-		}
-	}
-
-
 }
