@@ -1,0 +1,11 @@
+ajbc.doodle.calendar
+ajbc.doodle.calendar.aspects
+ajbc.doodle.calendar.controllers
+ajbc.doodle.calendar.daos
+ajbc.doodle.calendar.dataBase
+ajbc.doodle.calendar.entities
+ajbc.doodle.calendar.entities.webpush
+ajbc.doodle.calendar.enums
+ajbc.doodle.calendar.hibernates
+ajbc.doodle.calendar.managers
+ajbc.doodle.calendar.services
