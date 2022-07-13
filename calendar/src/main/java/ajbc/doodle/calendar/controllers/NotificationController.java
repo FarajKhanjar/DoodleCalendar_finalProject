@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.daos.NotificationDao;
@@ -68,7 +71,7 @@ public class NotificationController {
 		try {			
 			notificationService.updateNotification(notification, id);
 			notification = notificationService.getNotificationById(id);
-			notificationManager.updatedNotification(notification);
+			notificationManager.updateNotification(notification);
 			System.out.println("send::" +notification.getIsSent());
 			return ResponseEntity.status(HttpStatus.OK).body(notification);
 		} 
@@ -77,6 +80,25 @@ public class NotificationController {
 			errorMessage.setData(e.getMessage());
 			errorMessage.setMessage("failed to update notification in db");
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.PUT, path = "/list")
+	public ResponseEntity<?> updateNotificationsFromList(@RequestBody List<Notification> newNotifications) {
+		try {
+			notificationService.updateNotifications(newNotifications);
+			newNotifications = notificationService.idsListOfNotifications(
+					newNotifications.stream().map(
+							notification -> notification.getNotificationId()).collect(Collectors.toList()));
+			notificationManager.updateListOfNotifications(newNotifications);
+			return ResponseEntity.status(HttpStatus.OK).body(newNotifications);
+
+		}  catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to update list of notifications");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+
 		}
 	}
 

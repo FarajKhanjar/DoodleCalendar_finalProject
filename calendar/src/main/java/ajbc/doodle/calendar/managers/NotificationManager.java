@@ -54,10 +54,6 @@ public class NotificationManager {
 				.toList());
 	}
 
-	public void initiateThread() throws DaoException {
-		System.out.println("in initiateThread()");
-
-	}
 
 	@Transactional
 	public void run() throws DaoException, InterruptedException {
@@ -77,19 +73,24 @@ public class NotificationManager {
 						//isSentNotification(notification);
 					}
 				}
+					Thread.sleep(3000);
+
 
 				System.out.println("Notification Quere is null - No such user online.");
 				
 			} catch (DaoException e) {
 				e.printStackTrace();
-			} 
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 		});
 
 		thread.start();
 	}
 
-	public void updatedNotification(Notification notification) throws DaoException {
+	public void updateNotification(Notification notification) throws DaoException {
 		if (thread.isAlive())
 			thread.interrupt();
 		
@@ -111,6 +112,18 @@ public class NotificationManager {
 			e.printStackTrace();
 		}
 	}
+	
+	public void updateListOfNotifications(List<Notification> notifications) {
+		notifications.forEach(notification -> {
+			try {
+				updateNotification(notification);
+			} catch (DaoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+	}
+
 
 	public void isSentNotification(Notification notification) throws DaoException {
 		notification = notificationDao.getNotificationById(notification.getNotificationId());

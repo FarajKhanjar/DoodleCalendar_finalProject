@@ -1,5 +1,6 @@
 package ajbc.doodle.calendar.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,7 @@ public class NotificationService {
     public void updateNotification(Notification newNotification, Integer id) throws DaoException {
     	Notification currentNotification = notificationDao.getNotificationById(id);
 		newNotification.setNotificationId(id);
-		System.out.println("send:" +newNotification.getIsSent());
+
 		newNotification.setUserToNotify(currentNotification.getUserToNotify());
 		newNotification.setEventToNotify(currentNotification.getEventToNotify());
 		//newNotification.setIsSent(currentNotification.getIsSent());
@@ -82,6 +83,21 @@ public class NotificationService {
 		notification.setInActive(1);
 		//TODO make isSent inactive too
 		notificationDao.updateNotification(notification);		
+	}
+	
+	@Transactional(readOnly = false, rollbackFor = DaoException.class)
+	public void updateNotifications(List<Notification> notifications) throws DaoException {
+		for (Notification notification : notifications) {
+			updateNotification(notification, notification.getNotificationId());
+		}
+	}
+	
+	public List<Notification> idsListOfNotifications(List<Integer> idsList) throws DaoException {
+		List<Notification> notifications = new ArrayList<>();
+		for (Integer notificationId : idsList) {
+			notifications.add(getNotificationById(notificationId));
+		}
+		return notifications;
 	}
 
 }
