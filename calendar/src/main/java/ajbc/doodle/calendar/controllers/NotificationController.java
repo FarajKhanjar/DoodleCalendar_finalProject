@@ -55,6 +55,7 @@ public class NotificationController {
 		try {
 
 			notificationService.addNotificationOfUserEvent(userId, eventId, notification);
+			notificationManager.addNotification(notification);
 			return ResponseEntity.status(HttpStatus.CREATED).build();
 			
 		} catch (DaoException e) {

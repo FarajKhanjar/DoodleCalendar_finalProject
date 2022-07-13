@@ -20,9 +20,11 @@ import ajbc.doodle.calendar.entities.Notification;
 import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.enums.Unit;
 import ajbc.doodle.calendar.services.NotificationService;
+import lombok.Getter;
 import lombok.Setter;
 
 @Setter
+@Getter
 @Component
 public class NotificationManager {
 
@@ -34,7 +36,7 @@ public class NotificationManager {
 
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Autowired
 	private EventDao eventDao;
 
@@ -46,8 +48,7 @@ public class NotificationManager {
 
 	public NotificationManager() {
 
-		this.queue = new PriorityQueue<Notification>((n1, n2) -> calculateNotificationTime(n1)
-				.compareTo(calculateNotificationTime(n2)));
+		this.queue = new PriorityQueue<Notification>((n1, n2) -> getDelayTime(n1).compareTo(getDelayTime(n2)));
 	}
 
 	public void initNotificationToQueue(List<Notification> notifications) {
@@ -57,7 +58,6 @@ public class NotificationManager {
 						&& oneNotification.getInActive() == 0)
 				.toList());
 	}
-
 
 	@Transactional
 	public void run() throws DaoException, InterruptedException {
@@ -74,13 +74,13 @@ public class NotificationManager {
 
 					if (user.getUserOnline() == 1 && notification.getIsSent() == 0) {
 						executorService.execute(new PushManager(dataManager, user, notification));
-						//isSentNotification(notification);
+						// isSentNotification(notification);
 					}
-					
+
 				}
 				Thread.sleep(3000);
 				System.out.println("Notification Quere is null - No such user online.");
-				
+
 			} catch (DaoException e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
@@ -92,10 +92,25 @@ public class NotificationManager {
 		thread.start();
 	}
 
+	public void addNotification(Notification notification) throws DaoException {
+		if (thread.isAlive())
+			thread.interrupt();
+		queue.add(notification);
+
+		try {
+			run();
+		} catch (DaoException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	public void updateNotification(Notification notification) throws DaoException {
 		if (thread.isAlive())
 			thread.interrupt();
-		
+
 		Iterator<Notification> it = queue.iterator();
 		while (it.hasNext()) {
 			if (it.next().getNotificationId() == notification.getNotificationId()) {
@@ -112,7 +127,7 @@ public class NotificationManager {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void updateListOfNotifications(List<Notification> notifications) {
 		notifications.forEach(notification -> {
 			try {
@@ -123,18 +138,17 @@ public class NotificationManager {
 		});
 	}
 
-
 	public void makeNotificationsInActive(Notification notification) throws DaoException {
 		notification = notificationDao.getNotificationById(notification.getNotificationId());
 		notification.setIsSent(1);
 		notificationDao.updateNotification(notification);
-		
+
 		notification = notificationDao.getNotificationById(notification.getNotificationId());
 		notification.setInActive(1);
 		notificationDao.updateNotification(notification);
 	}
-	
-	public LocalDateTime calculateNotificationTime(Notification notification) {
+
+	public LocalDateTime getDelayTime(Notification notification) {
 		Event event;
 		try {
 			event = eventDao.getEventById(notification.getEventId());
@@ -151,26 +165,26 @@ public class NotificationManager {
 		}
 		return null;
 	}
-	
+
 	public void deleteNotification(Integer notificationId) {
 		if (thread.isAlive())
 			thread.interrupt();
-	
+
 		Iterator<Notification> it = queue.iterator();
 		while (it.hasNext()) {
 			if (it.next().getNotificationId() == notificationId) {
 				it.remove();
-				
+
 				try {
 					queue.add(notificationDao.getNotificationById(notificationId));
-					
+
 				} catch (DaoException e) {
 					e.printStackTrace();
 				}
 				break;
 			}
 		}
-		
+
 		try {
 			run();
 		} catch (DaoException e) {
@@ -180,5 +194,5 @@ public class NotificationManager {
 		}
 
 	}
-	
+
 }
