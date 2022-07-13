@@ -142,7 +142,7 @@ public class NotificationController {
 	public void run() throws DaoException, InterruptedException {
 		notificationManager.setDataManager(dataManager);
 		List<Notification> notifications = notificationDao.getAllNotifications();
-		notificationManager.addNotification(notifications);
+		notificationManager.initNotificationToQueue(notifications);
 		notificationManager.run();
 	}
 

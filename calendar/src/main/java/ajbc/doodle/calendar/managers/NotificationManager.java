@@ -1,5 +1,6 @@
 package ajbc.doodle.calendar.managers;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.ExecutorService;
@@ -38,10 +39,10 @@ public class NotificationManager {
 				.compareTo(n2.getEventToNotify().getStartDateTime()));
 	}
 	
-	public void addNotification(List<Notification> notifications) {
+	public void initNotificationToQueue(List<Notification> notifications) {
 		executorService = Executors.newCachedThreadPool();
-		for (int i = 0; i < notifications.size(); i++)
-			queue.add(notifications.get(i));
+		queue.addAll(notifications.stream().filter(oneNotification->oneNotification.getEventToNotify().getStartDateTime()
+				.isAfter(LocalDateTime.now()) && oneNotification.getInActive()==0).toList());
 	}
 	
 	public void run() throws DaoException, InterruptedException  {
@@ -55,9 +56,18 @@ public class NotificationManager {
 			notification = queue.poll();
 			user = userDao.getUserById(notification.getUserId());
 			
-			if(user.getUserOnline()==1) {
+			if(user.getUserOnline()== 1 && notification.getIsSent() == 0) {
 				executorService.execute(new PushManager(dataManager, user, notification));
-				//notification.setIsSent(1);
+				notification.setIsSent(1);
+				try {
+					
+					notificationService.updateNotification(notification, user.getUserId());
+					
+				} catch (DaoException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 				Thread.sleep(3000);
 				
 			}

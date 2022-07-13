@@ -4,6 +4,8 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -23,15 +25,20 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
 
 import ajbc.doodle.calendar.Application;
+import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.entities.User;
 import ajbc.doodle.calendar.entities.Notification;
 import ajbc.doodle.calendar.entities.webpush.PushMessage;
+import ajbc.doodle.calendar.services.NotificationService;
 
 public class PushManager implements Runnable {
 
 	private DataManager dataManager;
 	private User user;
 	private Notification notification;
+	
+	@Autowired
+	NotificationService notificationService;
 
 	public PushManager(DataManager dataManager, User user, Notification notification) {
 
@@ -62,17 +69,13 @@ public class PushManager implements Runnable {
 					"Event: " + notification.getEventToNotify().getTitle() + " Title: " + notification.getTitle()
 							+ " Message: " + notification.getMessage() + " sent to user " + user.getEmail());
 			
-				Thread.sleep(1000);
-			
+
 		} catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException
 				| InvalidAlgorithmParameterException | NoSuchPaddingException | IllegalBlockSizeException
 				| BadPaddingException | JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 
 		System.out.println("No more notifications right now.");
 	}
