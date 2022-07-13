@@ -24,6 +24,11 @@ public interface NotificationDao {
 	public default void updateNotification(Notification notification) throws DaoException {
 		throw new DaoException("Method not implemented");
 	}
+	
+	@Transactional(readOnly = false)
+	public default void deleteNotification(Integer notificationId) throws DaoException {
+		throw new DaoException("Method not implemented");
+	}
 
 
 	// Queries

@@ -53,6 +53,12 @@ public class NotificationService {
 		
 		notificationDao.updateNotification(newNotification);
 	}
+    
+    public void deleteNotificationSoftly(Integer notificationId) throws DaoException {
+		Notification notification = getNotificationById(notificationId);
+		notification.setInActive(1);
+		notificationDao.updateNotification(notification);
+	}
 
 	// Queries
 	public Notification getNotificationById(Integer NotificationId) throws DaoException {
@@ -99,5 +105,18 @@ public class NotificationService {
 		}
 		return notifications;
 	}
+	
+	@Transactional
+	public void deleteNotificationsListSoftly(List<Integer> notificationList) throws DaoException {
+		notificationList.forEach(oneNotification-> {
+			try {
+				deleteNotificationSoftly(oneNotification);
+				
+			} catch (DaoException e) {
+				e.printStackTrace();
+			} });
+	}
+	
+	
 
 }

@@ -147,6 +147,40 @@ public class NotificationController {
 		}
 	}
 	
+	@RequestMapping(method = RequestMethod.PUT, path="/softDelete/{notificationId}")
+	public ResponseEntity<?> deleteNotificationSoftly(@PathVariable Integer notificationId) {
+		
+		try {
+			notificationService.deleteNotificationSoftly(notificationId);
+			Notification notification = notificationService.getNotificationById(notificationId);
+			notificationManager.deleteNotification(notificationId);
+			return ResponseEntity.status(HttpStatus.OK).body(notification);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to do soft delete to this notification");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.PUT, path="/softDeleteList")
+	public ResponseEntity<?> deleteNotificationsListSoftly(@RequestBody List<Integer> notificationList) {
+		
+		try {
+			notificationService.deleteNotificationsListSoftly(notificationList);
+			notificationList.forEach(oneNotification -> 
+			notificationManager.deleteNotification(oneNotification));
+			return ResponseEntity.status(HttpStatus.OK).body("Soft Delete done");
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to do soft delete list to this notification");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
 	
 	//// Push notifications Control
 	

@@ -41,6 +41,12 @@ public class HibernateTemplateNotificationDao implements NotificationDao {
 	public void updateNotification(Notification notification) throws DaoException {
 		template.merge(notification);
 	}
+	
+	@Override
+	public void deleteNotification(Integer notificationId) throws DaoException {
+		Notification notification = getNotificationById(notificationId);
+		template.delete(notification);
+	}
 
 
 	// Queries
