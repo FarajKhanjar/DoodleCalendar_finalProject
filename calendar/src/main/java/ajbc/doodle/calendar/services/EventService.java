@@ -27,6 +27,9 @@ public class EventService {
 	@Autowired
 	private UserDao userDao;
 	
+	@Autowired
+	private UserService userService;
+	
 	// CRUD
 	public List<Event> getAllEvents() throws DaoException {
 		return eventDao.getAllEvents();
@@ -109,6 +112,17 @@ public class EventService {
 		System.out.println("------[Search for events in range dateTime of:]------");
 		System.out.println(startDate+" -> "+endDate);
 		return getUserEventsInDateRange(startDate, endDate, userId);
+	}
+	
+	public List<Event> getUserEventsByCategoryName(Integer userId,String categoryName) throws DaoException {
+		List<Event> events = eventDao.getEventsByCategoryName(categoryName);
+		List<Event> userEvents = new ArrayList<Event>();;
+		for(Event e : events) {
+			if(e.getEventOwner().getUserId()==userId)
+				userEvents.add(getEventById(e.getEventId()));
+		}
+	
+		return userEvents;
 	}
 	
 }

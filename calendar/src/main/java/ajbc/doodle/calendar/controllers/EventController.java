@@ -234,9 +234,26 @@ public class EventController {
 
 	}
 		
-		private boolean checkDateTimeValues(LocalDateTime startDate, LocalDateTime endDate) {
-			if (startDate.compareTo(endDate) > 0)
-				return false;
-			return true;
+	private boolean checkDateTimeValues(LocalDateTime startDate, LocalDateTime endDate) {
+		if (startDate.compareTo(endDate) > 0)
+			return false;
+		return true;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, path = "/userByCategoryName/{userId}/{categoryName}")
+	public ResponseEntity<?> getUserEventsByCategoryName(@PathVariable Integer userId, @PathVariable String categoryName) {
+		
+		List<Event> eventsOfCategory;
+		try {
+			eventsOfCategory = eventService.getUserEventsByCategoryName(userId,categoryName.toUpperCase());
+			return ResponseEntity.ok(eventsOfCategory);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to get events By this category");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+			//TODO fix null list return
 		}
+	}
 }
