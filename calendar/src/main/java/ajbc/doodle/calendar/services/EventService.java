@@ -103,4 +103,12 @@ public class EventService {
 				                        oneEvent.getEndDateTime().isBefore(endDate)).toList();
 	}
 	
+	public List<Event> getNextEventsOfUserByHoursMinutes(Integer hours, Integer minutes, Integer userId) throws DaoException {
+		LocalDateTime startDate = LocalDateTime.now();
+		LocalDateTime endDate = startDate.plusHours(hours).plusMinutes(minutes);
+		System.out.println("------[Search for events in range dateTime of:]------");
+		System.out.println(startDate+" -> "+endDate);
+		return getUserEventsInDateRange(startDate, endDate, userId);
+	}
+	
 }

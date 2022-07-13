@@ -212,6 +212,27 @@ public class EventController {
 			}
 		
 		}
+	
+	@RequestMapping(method = RequestMethod.GET, path = "/upcomingByTime/{userId}")
+	public ResponseEntity<?> getNextEventsOfUserByHoursMinutes(@PathVariable Integer userId,
+			@RequestParam Integer hours, @RequestParam Integer minutes) throws DaoException {
+		
+		List<Event> events;
+		try {
+			events = eventService.getNextEventsOfUserByHoursMinutes(hours, minutes, userId);
+			if (events == null)
+				return ResponseEntity.notFound().build();
+			
+			return ResponseEntity.ok(events);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to get events in the current by next num of hours and minutes.");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+		}
+
+	}
 		
 		private boolean checkDateTimeValues(LocalDateTime startDate, LocalDateTime endDate) {
 			if (startDate.compareTo(endDate) > 0)
