@@ -20,7 +20,11 @@ import ajbc.doodle.calendar.entities.ErrorMessage;
 import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.services.EventService;
 
-
+/**
+ * Event Controller that implements the Event-API
+ * @author Faraj
+ *
+ */
 @RequestMapping("/events")
 @RestController
 public class EventController {
@@ -28,12 +32,23 @@ public class EventController {
 	@Autowired
 	private EventService eventService;
 
+	/**
+	 * This method get all events from the Sql dataBase
+	 * @return list of events from the DB. or,
+	 * @throws DaoException if there is a error to get 'events' list  or not found.
+	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<Event>> getAllEvents() throws DaoException {
 		List<Event> events = eventService.getAllEvents();
 		return ResponseEntity.ok(events);
 	}
 
+	/**
+	 * This method add a new event to the DataBase.
+	 * @param event: The body of the new event.
+	 * @param userId: a key that shows for whom the event belong.
+	 * @return a new event, or get a error message if add event is fail.
+	 */
 	@RequestMapping(method = RequestMethod.POST, path = "/{userId}")
 	public ResponseEntity<?> addEvent(@RequestBody Event event, @PathVariable Integer userId) {
 		try {
@@ -49,6 +64,13 @@ public class EventController {
 		}
 	}
 
+	/**
+	 * This method updates the a event using his id.
+	 * @param event: The updated body of the event.
+	 * @param userId: key to update and save the updated user of event.
+	 * @param userId: key to update and save the updated event.
+	 * @return a updated new or a error message if update event is fail.
+	 */
 	@RequestMapping(method = RequestMethod.PUT)
 	public ResponseEntity<?> updateEvent(@RequestBody Event event, @RequestParam Integer userId ,@RequestParam Integer eventId) {
 		try {
@@ -67,6 +89,12 @@ public class EventController {
 		}
 	}
 
+	/**
+	 * This method get the event that have this id number
+	 * @param id: the key to search and get the event.
+	 * @return the event that have this id, or
+	 *        error message if searching for user is fail to get.
+	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/byId/{id}")
 	public ResponseEntity<?> getEventById(@PathVariable Integer id) {
 		try {
@@ -82,6 +110,11 @@ public class EventController {
 
 	}
 	
+	/**
+	 * This method get all events of an user by user id
+	 * @param userId: the key to get the user from DB
+	 * @return the events that have this belong to this user id.
+	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/byUserId/{userId}")
 	public ResponseEntity<?> getUserEvents(@PathVariable Integer userId) {
 		try {
@@ -98,6 +131,11 @@ public class EventController {
 
 	}
 	
+	/**
+	 * This method get the events that have category Id.
+	 * @param categoryId: a key to get the events from this type
+	 * @return the events by the category id Enum
+	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/byCategoryId/{categoryId}")
 	public ResponseEntity<?> getEventsByCategoryId(@PathVariable Integer categoryId) {
 		
@@ -115,6 +153,12 @@ public class EventController {
 		}
 	}
 	
+	/**
+	 * This method get the events that have category name.
+	 * @param categoryName: a key to get the events from this type
+	 * @return the events by the category name Enums:
+	 *         TASK, WEDDING, VACATION, BIRTHDAY, VOLUNTEERING or GENERAL;
+	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/byCategoryName/{categoryName}")
 	public ResponseEntity<?> getEventsByCategoryName(@PathVariable String categoryName) {
 		
@@ -128,10 +172,15 @@ public class EventController {
 			errorMessage.setData(e.getMessage());
 			errorMessage.setMessage("Failed to get events By this category");
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
-			//TODO fix null list return
 		}
 	}
 	
+	/**
+	 * This method get upcoming events of a user (only future events)
+	 * @param id: the key to get the user from DB
+	 * @return all the upcoming future events for the current user. or,
+	 * @throws DaoException if searching for events is fail to get.
+	 */
 	@RequestMapping(method = RequestMethod.GET, path="/futureEvents/{userId}")
 	public ResponseEntity<?> getFutureEventsOfUser(@PathVariable Integer userId) {
 		
@@ -150,12 +199,20 @@ public class EventController {
 		}		
 	}
 	
+	/**
+	 * This method get events of a user in a range between start date and time to end date and time.
+	 * @param userId: the key to get the user from DB
+	 * @param startDate: in format of '2022-09-01T00:00'
+	 * @param startDate: also in format of '2022-09-01T00:00'
+	 * @return all events that have this user in this dateTime range. or,
+	 *         get a error message if searching for events is failed.
+	 */
 	@RequestMapping(method = RequestMethod.GET, path="/userEventsRange/{userId}")
 	public ResponseEntity<?> getUserEventsInDateRange(@PathVariable Integer userId, 
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {	
 		
-		//TODO throw exception if dateFormat is wrong
+		
 		if(!checkDateTimeValues(startDate,endDate)) {
 			ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setData("HttpStatus.BAD_REQUEST");
@@ -181,6 +238,13 @@ public class EventController {
 		}		
 	}
 	
+	/**
+	 * This method get all events in a range between start date and time to end date and time.
+	 * @param startDate: in format of '2022-09-01T00:00'
+	 * @param startDate: also in format of '2022-09-01T00:00'
+	 * @return all events  in this dateTime range. or,
+	 *         get a error message if searching for events is failed.
+	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/allEventsRange")
 	public ResponseEntity<?> getAllEventsInDateRange( @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
 			@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
@@ -213,6 +277,14 @@ public class EventController {
 		
 		}
 	
+	/**
+	 * This method get events of a user the next coming num of minutes and hours.
+	 * @param userId: the key to get the user from DB
+	 * @param hours: number of hours for the event.
+	 * @param minutes: number of minutes for the event.
+	 * @return all next events by this inputs. or,
+	 * @throws DaoException if get a error message if searching for events is failed.
+	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/upcomingByTime/{userId}")
 	public ResponseEntity<?> getNextEventsOfUserByHoursMinutes(@PathVariable Integer userId,
 			@RequestParam Integer hours, @RequestParam Integer minutes) throws DaoException {
@@ -234,12 +306,25 @@ public class EventController {
 
 	}
 		
+	/**
+	 * This is a handle method for check if the entering of the date in Postman is correct.
+	 * @return false or true.
+	 */
 	private boolean checkDateTimeValues(LocalDateTime startDate, LocalDateTime endDate) {
 		if (startDate.compareTo(endDate) > 0)
 			return false;
 		return true;
 	}
 	
+	/**
+	 * This method get all events of user by category name.
+	 * @param userId: the current user
+	 * @param categoryName: the type/ category of event that the user interested to get.
+	 * @return all events of user in the category. or,
+	 *         get a error message if searching for events is failed.
+	 *         The Category Enums:
+	 *         TASK, WEDDING, VACATION, BIRTHDAY, VOLUNTEERING or GENERAL;
+	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/userByCategoryName/{userId}/{categoryName}")
 	public ResponseEntity<?> getUserEventsByCategoryName(@PathVariable Integer userId, @PathVariable String categoryName) {
 		
@@ -253,10 +338,15 @@ public class EventController {
 			errorMessage.setData(e.getMessage());
 			errorMessage.setMessage("Failed to get events By this category");
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
-			//TODO fix null list return
 		}
 	}
 	
+	/**
+	 * This method do a soft delete of the a event using his id.
+	 * @param eventId: the key to get the event from DB
+	 * @return updated event that have a value = 1 in failed = inActive. or,
+	 * @throws DaoException if deleting softly of event is fail.
+	 */
 	@RequestMapping(method = RequestMethod.PUT, path="/softDelete/{eventId}")
 	public ResponseEntity<?> deleteEventSoftly(@PathVariable Integer eventId) {
 		
@@ -273,6 +363,12 @@ public class EventController {
 		}
 	}
 	
+	/**
+	 * This method do a soft delete of a list of events.
+	 * @param eventList: the key to get the event from DB
+	 * @return updated event that have a value = 1 in failed = inActive. or,
+	 * @throws DaoException if deleting softly of events list is fail.
+	 */
 	@RequestMapping(method = RequestMethod.PUT, path="/softDeleteList")
 	public ResponseEntity<?> deleteEventsListSoftly(@RequestBody List<Integer> eventList) {
 		
@@ -288,6 +384,12 @@ public class EventController {
 		}
 	}
 	
+	/**
+	 * This method do a hard delete of the a event using his id.
+	 * @param eventId: the key to get the event from DB
+	 * @return a message that the delete done or not, and delete event totally from DB. or,
+	 * @throws DaoException if deleting hardly of event is fail.
+	 */
 	@RequestMapping(method = RequestMethod.DELETE, path="/hardDelete/{eventId}")
 	public ResponseEntity<?> deleteEventHardly(@PathVariable Integer eventId) {
 		
@@ -303,6 +405,12 @@ public class EventController {
 		}
 	}
 
+	/**
+	 * This method do a hard delete of a list of events.
+	 * @param eventList: the key to get the event from DB
+	 * @return a message that the delete done or not, and delete events list totally from DB. or,
+	 * @throws DaoException if deleting hardly of events list is fail.
+	 */
 	@RequestMapping(method = RequestMethod.DELETE, path="/hardDeleteList")
 	public ResponseEntity<?> deleteEventsListHardly(@RequestBody List<Integer> eventsList) {
 		
