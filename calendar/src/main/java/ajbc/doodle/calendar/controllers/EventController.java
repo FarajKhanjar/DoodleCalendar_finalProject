@@ -287,4 +287,34 @@ public class EventController {
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
 		}
 	}
+	
+	@RequestMapping(method = RequestMethod.DELETE, path="/hardDelete/{eventId}")
+	public ResponseEntity<?> deleteEventHardly(@PathVariable Integer eventId) {
+		
+		try {
+			eventService.deleteEventHardly(eventId);
+			return ResponseEntity.status(HttpStatus.OK).body("Event deleted!");
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to do hard delete event.");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+
+	@RequestMapping(method = RequestMethod.DELETE, path="/hardDeleteList")
+	public ResponseEntity<?> deleteEventsListHardly(@RequestBody List<Integer> eventsList) {
+		
+		try {
+			eventService.deleteEventsListHardly(eventsList);
+			return ResponseEntity.status(HttpStatus.OK).body("Events list deleted!");
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to do hard delete events list");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
 }

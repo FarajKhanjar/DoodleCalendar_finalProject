@@ -48,11 +48,24 @@ public class EventService {
 		eventDao.updateEvent(event);
 	}
 	
-	public void deleteEventSoftly(Integer eventId) throws DaoException
-	{
+	public void deleteEventSoftly(Integer eventId) throws DaoException {
 		Event event = getEventById(eventId);
 		event.setInActive(1);		
 		eventDao.updateEvent(event);		
+	}
+	
+	public void deleteEventHardly(Integer eventId) throws DaoException {
+		Event event = getEventById(eventId);
+		
+		Set<Notification> eventNotifications = event.getNotifications();
+		eventNotifications.forEach(oneNotification-> {
+			try {
+				notificationDao.deleteNotification(oneNotification.getNotificationId());
+				
+			} catch (DaoException e) {
+				e.printStackTrace();
+			} });
+		eventDao.deleteEvent(eventId);
 	}
 	
 	// Queries
@@ -140,6 +153,16 @@ public class EventService {
 		eventsList.forEach(oneEvent -> {
 			try {
 				deleteEventSoftly(oneEvent);
+				
+			} catch (DaoException e) {
+				e.printStackTrace();
+			} });
+	}
+	
+	@Transactional
+	public void deleteEventsListHardly(List<Integer> eventsList) throws DaoException {
+		eventsList.forEach(oneNotification -> { try {
+				deleteEventHardly(oneNotification);
 				
 			} catch (DaoException e) {
 				e.printStackTrace();
