@@ -55,9 +55,12 @@ public class NotificationManager {
 			notification = queue.poll();
 			user = userDao.getUserById(notification.getUserId());
 			
-			if(user.getUserOnline()==1)
+			if(user.getUserOnline()==1) {
 				executorService.execute(new PushManager(dataManager, user, notification));
-			Thread.sleep(3000);
+				//notification.setIsSent(1);
+				Thread.sleep(3000);
+				
+			}
 
 		}
 		

@@ -44,7 +44,12 @@ public class PushManager implements Runnable {
 	@Override
 	public void run() {
 
-		PushMessage pushMsgObj = new PushMessage(notification.getTitle(), notification.getMessage());
+		String pushMsg = "Event: " + notification.getEventToNotify().getTitle() + " | At: " + notification.getEventToNotify().getAddress() 
+			+	" | Title: " + notification.getTitle()
+		+ " | Message: " + notification.getMessage();
+		
+		PushMessage pushMsgObj = new PushMessage(notification.getTitle(), pushMsg);
+		
 		byte[] result;
 		try {
 			result = dataManager.getCryptoService().encrypt(
@@ -56,16 +61,20 @@ public class PushManager implements Runnable {
 			System.out.println(
 					"Event: " + notification.getEventToNotify().getTitle() + " Title: " + notification.getTitle()
 							+ " Message: " + notification.getMessage() + " sent to user " + user.getEmail());
-			notification.setIsSent(1);
+			
+				Thread.sleep(1000);
 			
 		} catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException
 				| InvalidAlgorithmParameterException | NoSuchPaddingException | IllegalBlockSizeException
 				| BadPaddingException | JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		System.out.println("Notification Quere is null - No such user online.");
+		System.out.println("No more notifications right now.");
 	}
 
 	/**
