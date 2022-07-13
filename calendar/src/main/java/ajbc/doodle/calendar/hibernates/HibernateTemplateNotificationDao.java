@@ -3,6 +3,7 @@ package ajbc.doodle.calendar.hibernates;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.stereotype.Component;
@@ -50,5 +51,14 @@ public class HibernateTemplateNotificationDao implements NotificationDao {
 			throw new DaoException("There is no such notification in 'notifications' DB with id: ");
 		return notification;
 	}
+	
+	@Override
+	public List<Notification> getUserNotifications(Integer userId) throws DaoException {
+		DetachedCriteria criteria = DetachedCriteria.forClass(Notification.class);
+		criteria.add(Restrictions.eq("userId", userId));
+		return (List<Notification>) template
+				.findByCriteria(criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY));
+	}
+
 
 }

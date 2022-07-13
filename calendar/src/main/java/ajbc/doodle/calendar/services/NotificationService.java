@@ -60,6 +60,12 @@ public class NotificationService {
 		return event.getNotifications().stream().collect(Collectors.toList());
 	}
 	
+	@Transactional(rollbackFor = {DaoException.class})
+	public List<Notification> getUserNotifications(Integer userId) throws DaoException {
+		userDao.getUserById(userId);
+		return notificationDao.getUserNotifications(userId);
+	}
+	
 	
 	private boolean checkIfUserBelongToEvent(int eventId, int userId) throws DaoException {
 		Event event = eventDao.getEventById(eventId);

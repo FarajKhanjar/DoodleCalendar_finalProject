@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 import ajbc.doodle.calendar.entities.Notification;
-import ajbc.doodle.calendar.entities.User;
 
 
 @Transactional(rollbackFor = { DaoException.class }, readOnly = true)
@@ -31,6 +30,11 @@ public interface NotificationDao {
 	public default Notification getNotificationById(Integer id) throws DaoException {
 		throw new DaoException("Method not implemented");
 	}
+	
+	public default List<Notification> getUserNotifications(Integer userId) throws DaoException {
+		throw new DaoException("Method not implemented");
+	}
+
 
 
 }

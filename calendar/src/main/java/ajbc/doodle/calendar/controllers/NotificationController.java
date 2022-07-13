@@ -14,40 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.daos.NotificationDao;
-import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.ErrorMessage;
 import ajbc.doodle.calendar.entities.Notification;
-import ajbc.doodle.calendar.entities.User;
-import ajbc.doodle.calendar.entities.webpush.PushMessage;
 import ajbc.doodle.calendar.managers.DataManager;
 import ajbc.doodle.calendar.managers.NotificationManager;
 import ajbc.doodle.calendar.services.NotificationService;
-import ajbc.doodle.calendar.Application;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpRequest.BodyPublishers;
-import java.net.http.HttpRequest.Builder;
-import java.net.http.HttpResponse.BodyHandlers;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.Date;
-
-import com.auth0.jwt.JWT;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 
 @RequestMapping("/notifications")
@@ -59,9 +32,6 @@ public class NotificationController {
 	
 	@Autowired
 	private NotificationDao notificationDao;
-
-	@Autowired
-	private UserDao userDao;
 
 	@Autowired
 	private DataManager dataManager;
@@ -136,7 +106,22 @@ public class NotificationController {
 			errorMsg.setData(e.getMessage());
 			errorMsg.setMessage("Failed to get notifications of this event.");
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
-			//TODO fix null list return
+
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, path = "/byUserId/{id}")
+	public ResponseEntity<?> getUserNotifications(@PathVariable Integer id)  {
+		try {
+			List<Notification> notifications = notificationService.getUserNotifications(id);
+			return ResponseEntity.ok(notifications);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMsg = new ErrorMessage();
+			errorMsg.setData(e.getMessage());
+			errorMsg.setMessage("Failed to get notifications of this user.");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMsg);
+
 		}
 	}
 	
