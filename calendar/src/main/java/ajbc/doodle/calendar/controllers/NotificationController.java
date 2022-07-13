@@ -25,7 +25,11 @@ import ajbc.doodle.calendar.managers.DataManager;
 import ajbc.doodle.calendar.managers.NotificationManager;
 import ajbc.doodle.calendar.services.NotificationService;
 
-
+/**
+ * Notification Controller that implements the Notification-API
+ * @author Faraj
+ *
+ */
 @RequestMapping("/notifications")
 @RestController
 public class NotificationController {
@@ -42,6 +46,11 @@ public class NotificationController {
 	@Autowired
 	private NotificationManager notificationManager;
 	
+	/**
+	 * This method get all notifications from the Sql dataBase
+	 * @return list of notifications from the DB. or,
+	 * @throws DaoException if there is a error to get 'notifications' list  or not found.
+	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<Notification>> getAllNotifications() throws DaoException {
 		List<Notification> allNotifications = notificationService.getAllNotifications();
@@ -50,6 +59,13 @@ public class NotificationController {
 		return ResponseEntity.ok(allNotifications);
 	}
 	
+	/**
+	 * This method add a new event to the DataBase.
+	 * @param notification: The body of the new event.
+	 * @param userId: a key that shows for whom the user belong.
+	 * @param eventId: a key that shows for whom the event belong.
+	 * @return a new notification, or get a error message if add notification is fail.
+	 */
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> addNotification(@RequestBody Notification notification, @RequestParam Integer userId ,@RequestParam Integer eventId) {
 		try {
@@ -66,6 +82,12 @@ public class NotificationController {
 		}
 	}
 	
+	/**
+	 * This method updates the a notification using the id.
+	 * @param notification: The updated body of the notification.
+	 * @param id: key to update and save the updated notification.
+	 * @return a updated new notification or a error message if update notification is fail.
+	 */
 	@RequestMapping(method = RequestMethod.PUT, path = "/{id}")
 	public ResponseEntity<?> updateNotification(@RequestBody Notification notification, @PathVariable Integer id) {
 		
@@ -84,6 +106,11 @@ public class NotificationController {
 		}
 	}
 	
+	/**
+	 * This method updates a list of notification.
+	 * @param newNotifications: The updated body of the notifications that we wont to update.
+	 * @return a updated new notifications list or a error message if update notification is fail.
+	 */
 	@RequestMapping(method = RequestMethod.PUT, path = "/list")
 	public ResponseEntity<?> updateNotificationsFromList(@RequestBody List<Notification> newNotifications) {
 		try {
@@ -99,10 +126,15 @@ public class NotificationController {
 			errorMessage.setData(e.getMessage());
 			errorMessage.setMessage("Failed to update list of notifications");
 			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
-
 		}
 	}
 
+	/**
+	 * This method get the notification that have this id number
+	 * @param id: the key to search and get the notification.
+	 * @return the notification that have this id, or
+	 *        error message if searching for notification is fail to get.
+	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/byId/{id}")
 	public ResponseEntity<?> getNotificationById(@PathVariable Integer id) throws DaoException {
 		try {
@@ -118,6 +150,11 @@ public class NotificationController {
 
 	}
 	
+	/**
+	 * This method get all notifications of an event by event id
+	 * @param id: the key to get the event from DB
+	 * @return the notifications that belong to this event id.
+	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/byEventId/{id}")
 	public ResponseEntity<?> getEventNotifications(@PathVariable Integer id)  {
 		try {
@@ -133,6 +170,11 @@ public class NotificationController {
 		}
 	}
 	
+	/**
+	 * This method get all notifications of an user by user id
+	 * @param id: the key to get the user from DB
+	 * @return the notifications that belong to this user id.
+	 */
 	@RequestMapping(method = RequestMethod.GET, path = "/byUserId/{id}")
 	public ResponseEntity<?> getUserNotifications(@PathVariable Integer id)  {
 		try {
@@ -148,6 +190,12 @@ public class NotificationController {
 		}
 	}
 	
+	/**
+	 * This method do a soft delete of the a notification using his id.
+	 * @param notificationId: the key to get the notification from DB
+	 * @return updated notification that have a value = 1 in failed = inActive. or,
+	 * @throws DaoException if deleting softly of notification is fail.
+	 */
 	@RequestMapping(method = RequestMethod.PUT, path="/softDelete/{notificationId}")
 	public ResponseEntity<?> deleteNotificationSoftly(@PathVariable Integer notificationId) {
 		
@@ -165,6 +213,12 @@ public class NotificationController {
 		}
 	}
 	
+	/**
+	 * This method do a soft delete of a list of notifications.
+	 * @param notificationList: the new body of all notifications
+	 * @return updated notifications that have a value = 1 in failed = inActive. or,
+	 * @throws DaoException if deleting softly of notifications list is fail.
+	 */
 	@RequestMapping(method = RequestMethod.PUT, path="/softDeleteList")
 	public ResponseEntity<?> deleteNotificationsListSoftly(@RequestBody List<Integer> notificationList) {
 		
@@ -182,6 +236,12 @@ public class NotificationController {
 		}
 	}
 	
+	/**
+	 * This method do a hard delete of the a notification using his id.
+	 * @param notificationId: the key to get the notification from DB
+	 * @return a message that the delete done or not, and delete notification totally from DB. or,
+	 * @throws DaoException if deleting hardly of notification is fail.
+	 */
 	@RequestMapping(method = RequestMethod.DELETE, path="/hardDelete/{notificationId}")
 	public ResponseEntity<?> deleteNotificationHardly(@PathVariable Integer notificationId) {
 		
@@ -198,6 +258,12 @@ public class NotificationController {
 		}
 	}
 	
+	/**
+	 * This method do a hard delete of a list of notifications.
+	 * @param notificationList: the new body of all notifications
+	 * @return a message that the delete done or not, and delete notifications list totally from DB. or,
+	 * @throws DaoException if deleting hardly of notifications list is fail.
+	 */
 	@RequestMapping(method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteNotificationsListHardly(@RequestBody List<Integer> notificationList) {
 		
@@ -228,6 +294,11 @@ public class NotificationController {
 		return dataManager.getServerKeys().getPublicKeyBase64();
 	}
 	
+	/**
+	 * Start the NotificationManager -> run(), using dataManager.
+	 * @throws DaoException
+	 * @throws InterruptedException
+	 */
 	@Scheduled(initialDelay = 2000 ,fixedDelay = 6000)
 	public void run() throws DaoException, InterruptedException {
 		notificationManager.setDataManager(dataManager);
