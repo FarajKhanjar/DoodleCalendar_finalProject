@@ -42,11 +42,15 @@ public class NotificationService {
 		notificationDao.addNotification(newNotification);
 	}
 	
-    public void updateNotification(Notification notification, Integer userId) throws DaoException {
+    public void updateNotification(Notification newNotification, Integer id) throws DaoException {
+    	Notification currentNotification = notificationDao.getNotificationById(id);
+		newNotification.setNotificationId(id);
+		System.out.println("send:" +newNotification.getIsSent());
+		newNotification.setUserToNotify(currentNotification.getUserToNotify());
+		newNotification.setEventToNotify(currentNotification.getEventToNotify());
+		//newNotification.setIsSent(currentNotification.getIsSent());
 		
-		if (userId.equals(notification.getUserId())==false)
-				throw new DaoException("Owner only can update notification");
-		notificationDao.updateNotification(notification);		
+		notificationDao.updateNotification(newNotification);
 	}
 
 	// Queries

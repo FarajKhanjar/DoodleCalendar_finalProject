@@ -63,16 +63,16 @@ public class NotificationController {
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT, path = "/{id}")
-	public ResponseEntity<?> updateNotification(@RequestBody Notification notification, @PathVariable Integer id, @RequestParam Integer userId) {
+	public ResponseEntity<?> updateNotification(@RequestBody Notification notification, @PathVariable Integer id) {
 		
-		try {
-			//TODO fix updating notification
-			notification.setNotificationId(id);
-			notificationService.updateNotification(notification, userId);
-			notification = notificationService.getNotificationById(notification.getNotificationId());
+		try {			
+			notificationService.updateNotification(notification, id);
+			notification = notificationService.getNotificationById(id);
+			notificationManager.updatedNotification(notification);
+			System.out.println("send::" +notification.getIsSent());
 			return ResponseEntity.status(HttpStatus.OK).body(notification);
-			
-		} catch (DaoException e) {
+		} 
+		catch (DaoException e) {
 			ErrorMessage errorMessage = new ErrorMessage();
 			errorMessage.setData(e.getMessage());
 			errorMessage.setMessage("failed to update notification in db");

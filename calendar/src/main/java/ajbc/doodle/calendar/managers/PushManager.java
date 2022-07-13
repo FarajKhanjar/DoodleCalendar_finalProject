@@ -68,14 +68,18 @@ public class PushManager implements Runnable {
 			System.out.println(
 					"Event: " + notification.getEventToNotify().getTitle() + " Title: " + notification.getTitle()
 							+ " Message: " + notification.getMessage() + " sent to user " + user.getEmail());
-			
+
+				Thread.sleep(3000);
 
 		} catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException
 				| InvalidAlgorithmParameterException | NoSuchPaddingException | IllegalBlockSizeException
 				| BadPaddingException | JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		System.out.println("No more notifications right now.");
 	}
