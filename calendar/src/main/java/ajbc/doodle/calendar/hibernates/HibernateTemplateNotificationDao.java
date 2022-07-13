@@ -65,6 +65,14 @@ public class HibernateTemplateNotificationDao implements NotificationDao {
 		return (List<Notification>) template
 				.findByCriteria(criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY));
 	}
+	
+	@Override
+	public List<Notification> getNotificationsByEventId(Integer eventId) throws DaoException {
+		DetachedCriteria criteria = DetachedCriteria.forClass(Notification.class);
+		criteria.add(Restrictions.eq("eventId", eventId));
+		return (List<Notification>) template
+				.findByCriteria(criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY));
+	}
 
 
 }

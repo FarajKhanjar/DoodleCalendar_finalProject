@@ -256,4 +256,35 @@ public class EventController {
 			//TODO fix null list return
 		}
 	}
+	
+	@RequestMapping(method = RequestMethod.PUT, path="/softDelete/{eventId}")
+	public ResponseEntity<?> deleteEventSoftly(@PathVariable Integer eventId) {
+		
+		try {
+			eventService.deleteEventSoftly(eventId);
+			Event event = eventService.getEventById(eventId);
+			return ResponseEntity.status(HttpStatus.OK).body(event);
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to do soft delete for this event");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.PUT, path="/softDeleteList")
+	public ResponseEntity<?> deleteEventsListSoftly(@RequestBody List<Integer> eventList) {
+		
+		try {
+			eventService.deleteEventsListSoftly(eventList);
+			return ResponseEntity.status(HttpStatus.OK).body("Soft Delete done!");
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to do soft delete for this event list");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
 }

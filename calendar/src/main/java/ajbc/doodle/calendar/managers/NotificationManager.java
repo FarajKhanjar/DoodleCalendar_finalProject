@@ -178,7 +178,7 @@ public class NotificationManager {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
 
 	}
+	
 }

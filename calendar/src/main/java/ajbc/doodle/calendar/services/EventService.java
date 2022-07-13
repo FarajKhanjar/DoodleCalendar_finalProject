@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ajbc.doodle.calendar.daos.DaoException;
 import ajbc.doodle.calendar.daos.EventDao;
+import ajbc.doodle.calendar.daos.NotificationDao;
 import ajbc.doodle.calendar.daos.UserDao;
 import ajbc.doodle.calendar.entities.Event;
 import ajbc.doodle.calendar.entities.User;
@@ -26,6 +27,9 @@ public class EventService {
 
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	NotificationDao notificationDao;
 	
 	@Autowired
 	private UserService userService;
@@ -44,7 +48,13 @@ public class EventService {
 		eventDao.updateEvent(event);
 	}
 	
-
+	public void deleteEventSoftly(Integer eventId) throws DaoException
+	{
+		Event event = getEventById(eventId);
+		event.setInActive(1);		
+		eventDao.updateEvent(event);		
+	}
+	
 	// Queries
 	public Event getEventById(Integer eventId) throws DaoException {
 		return eventDao.getEventById(eventId);
@@ -123,6 +133,17 @@ public class EventService {
 		}
 	
 		return userEvents;
+	}
+	
+	@Transactional
+	public void deleteEventsListSoftly(List<Integer> eventsList) throws DaoException {
+		eventsList.forEach(oneEvent -> {
+			try {
+				deleteEventSoftly(oneEvent);
+				
+			} catch (DaoException e) {
+				e.printStackTrace();
+			} });
 	}
 	
 }

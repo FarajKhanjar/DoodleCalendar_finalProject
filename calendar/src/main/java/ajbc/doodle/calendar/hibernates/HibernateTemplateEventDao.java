@@ -45,6 +45,12 @@ public class HibernateTemplateEventDao implements EventDao {
 	public void updateEvent(Event event) throws DaoException {
 		template.merge(event);
 	}
+	
+	@Override
+	public void deleteEvent(Integer eventId) throws DaoException {
+		Event event = getEventById(eventId);
+		template.delete(event);
+	}
 
 
 	// Queries
