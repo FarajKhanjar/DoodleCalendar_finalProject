@@ -181,6 +181,39 @@ public class NotificationController {
 		}
 	}
 	
+	@RequestMapping(method = RequestMethod.DELETE, path="/hardDelete/{notificationId}")
+	public ResponseEntity<?> deleteNotificationHardly(@PathVariable Integer notificationId) {
+		
+		try {
+			notificationService.deleteNotificationHardly(notificationId);
+			notificationManager.deleteNotification(notificationId);
+			return ResponseEntity.status(HttpStatus.OK).body("Notification deleted!");
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to do hard delete to this notification");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
+	@RequestMapping(method = RequestMethod.DELETE)
+	public ResponseEntity<?> deleteNotificationsListHardly(@RequestBody List<Integer> notificationList) {
+		
+		try {
+			notificationService.deleteNotificationsListHardly(notificationList);
+			notificationList.forEach(oneNotification -> 
+			              notificationManager.deleteNotification(oneNotification));
+			return ResponseEntity.status(HttpStatus.OK).body("All notification deleted!");
+			
+		} catch (DaoException e) {
+			ErrorMessage errorMessage = new ErrorMessage();
+			errorMessage.setData(e.getMessage());
+			errorMessage.setMessage("Failed to do hard delete list to this notification");
+			return ResponseEntity.status(HttpStatus.valueOf(500)).body(errorMessage);
+		}
+	}
+	
 	
 	//// Push notifications Control
 	
